@@ -1,9 +1,0 @@
-C:\Users\Marti\Source\Repos\TeamTrein\Minor.Nijn\Minor.Nijn\bin\Debug\netstandard2.0\Minor.Nijn.deps.json
-C:\Users\Marti\Source\Repos\TeamTrein\Minor.Nijn\Minor.Nijn\bin\Debug\netstandard2.0\Minor.Nijn.dll
-C:\Users\Marti\Source\Repos\TeamTrein\Minor.Nijn\Minor.Nijn\bin\Debug\netstandard2.0\Minor.Nijn.pdb
-C:\Users\Marti\Source\Repos\TeamTrein\Minor.Nijn\Minor.Nijn\obj\Debug\netstandard2.0\Minor.Nijn.csprojAssemblyReference.cache
-C:\Users\Marti\Source\Repos\TeamTrein\Minor.Nijn\Minor.Nijn\obj\Debug\netstandard2.0\Minor.Nijn.csproj.CoreCompileInputs.cache
-C:\Users\Marti\Source\Repos\TeamTrein\Minor.Nijn\Minor.Nijn\obj\Debug\netstandard2.0\Minor.Nijn.AssemblyInfoInputs.cache
-C:\Users\Marti\Source\Repos\TeamTrein\Minor.Nijn\Minor.Nijn\obj\Debug\netstandard2.0\Minor.Nijn.AssemblyInfo.cs
-C:\Users\Marti\Source\Repos\TeamTrein\Minor.Nijn\Minor.Nijn\obj\Debug\netstandard2.0\Minor.Nijn.dll
-C:\Users\Marti\Source\Repos\TeamTrein\Minor.Nijn\Minor.Nijn\obj\Debug\netstandard2.0\Minor.Nijn.pdb

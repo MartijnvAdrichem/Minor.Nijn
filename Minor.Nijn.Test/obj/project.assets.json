@@ -2473,11 +2473,10 @@
   },
   "libraries": {
     "Castle.Core/4.3.1": {
-      "sha512": "Dx90A7xzdyYiaq1aMn3QmblpFAaVhDCiZkSblt96pf8QopOjLxCcs5ufKJA1zyg2L+Hxjnzx3JNrmfK8ZMRHvA==",
+      "sha512": "8Y/eTr6GTElAGV7eAmJuhfLhGdFpNvaNrQ9UQYDScziLmX+/BLGM+9eQr0IcdNDcPN0ADmbtwT6MgecGKy4obw==",
       "type": "package",
       "path": "castle.core/4.3.1",
       "files": [
-        ".signature.p7s",
         "ASL - Apache Software Foundation License.txt",
         "CHANGELOG.md",
         "LICENSE",
@@ -7854,23 +7853,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Marti\\.nuget\\packages\\": {},
+    "C:\\Users\\Bram\\.nuget\\packages\\": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Marti\\Source\\Repos\\TeamTrein\\Minor.Nijn\\Minor.Nijn.Test\\Minor.Nijn.Test.csproj",
+      "projectUniqueName": "D:\\Bram\\Dropbox\\Code\\Visual Studio 2017\\Projects\\Minor.Nijn\\Minor.Nijn.Test\\Minor.Nijn.Test.csproj",
       "projectName": "Minor.Nijn.Test",
-      "projectPath": "C:\\Users\\Marti\\Source\\Repos\\TeamTrein\\Minor.Nijn\\Minor.Nijn.Test\\Minor.Nijn.Test.csproj",
-      "packagesPath": "C:\\Users\\Marti\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Marti\\Source\\Repos\\TeamTrein\\Minor.Nijn\\Minor.Nijn.Test\\obj\\",
+      "projectPath": "D:\\Bram\\Dropbox\\Code\\Visual Studio 2017\\Projects\\Minor.Nijn\\Minor.Nijn.Test\\Minor.Nijn.Test.csproj",
+      "packagesPath": "C:\\Users\\Bram\\.nuget\\packages\\",
+      "outputPath": "D:\\Bram\\Dropbox\\Code\\Visual Studio 2017\\Projects\\Minor.Nijn\\Minor.Nijn.Test\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\Marti\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Bram\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -7883,8 +7882,8 @@
       "frameworks": {
         "netcoreapp2.1": {
           "projectReferences": {
-            "C:\\Users\\Marti\\Source\\Repos\\TeamTrein\\Minor.Nijn\\Minor.Nijn\\Minor.Nijn.csproj": {
-              "projectPath": "C:\\Users\\Marti\\Source\\Repos\\TeamTrein\\Minor.Nijn\\Minor.Nijn\\Minor.Nijn.csproj"
+            "D:\\Bram\\Dropbox\\Code\\Visual Studio 2017\\Projects\\Minor.Nijn\\Minor.Nijn\\Minor.Nijn.csproj": {
+              "projectPath": "D:\\Bram\\Dropbox\\Code\\Visual Studio 2017\\Projects\\Minor.Nijn\\Minor.Nijn\\Minor.Nijn.csproj"
             }
           }
         }
