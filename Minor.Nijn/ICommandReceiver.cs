@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Minor.Nijn.RabbitMQBus
+namespace Minor.Nijn
 {
     public interface ICommandReceiver : IDisposable
     {
@@ -13,5 +11,4 @@ namespace Minor.Nijn.RabbitMQBus
     }
 
     public delegate CommandMessage CommandReceivedCallback(CommandMessage commandMessage);
-
 }

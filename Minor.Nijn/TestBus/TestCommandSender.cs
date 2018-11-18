@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Minor.Nijn.RabbitMQBus;
-using RabbitMQ.Client;
 using RabbitMQ.Client.Framing;
 
 namespace Minor.Nijn.TestBus

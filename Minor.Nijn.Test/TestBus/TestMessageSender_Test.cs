@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Minor.Nijn.TestBus;
 
 namespace Minor.Nijn.TestBus.Test
 {
     [TestClass]
-    public class TestMessageSenderTest
+    public class TestMessageSender_Test
     {
 
         [TestMethod]
@@ -27,8 +24,6 @@ namespace Minor.Nijn.TestBus.Test
             Assert.IsFalse(TestMessageSender.IsTopicMatch("Minor.Nijn", "Minor.Nijn.BerichtVerstuurd"));
             Assert.IsFalse(TestMessageSender.IsTopicMatch("Minor", "Minor.Nijn.BerichtVerstuurd"));
             Assert.IsFalse(TestMessageSender.IsTopicMatch("Mva.Minor.Nijn.BerichtVerstuurd", "Minor.Nijn.BerichtVerstuurd"));
-
-
         }
 
         [TestMethod]

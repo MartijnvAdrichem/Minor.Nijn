@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Minor.Nijn.TestBus;
 using RabbitMQ.Client.Framing;
 
 namespace Minor.Nijn.TestBus.Test
 {
     [TestClass]
-    public class TestCommandReceiverTest
+    public class TestCommandReceiver_Test
     {
-
         [TestMethod]
         public void TestCommandReceiverCreateTest()
         {
@@ -56,8 +51,6 @@ namespace Minor.Nijn.TestBus.Test
             Assert.AreEqual(0, context.CommandQueues["queue"].Count);
             Thread.Sleep(100);
             Assert.AreEqual(1, context.CommandQueues["responseQueue"].Count);
-            
-
         }
 
         [TestMethod]
@@ -69,6 +62,7 @@ namespace Minor.Nijn.TestBus.Test
             receiver.StartReceivingCommands((cm) => { return cm;});
            Assert.ThrowsException<BusConfigurationException>(() => receiver.StartReceivingCommands((cm) => { return cm;}));
         }
+
         [TestMethod]
         public void DeclaringQueueTwiceThrowsException()
         {
@@ -80,7 +74,7 @@ namespace Minor.Nijn.TestBus.Test
         }
 
         [TestMethod]
-        public async Task TestbusIntegratieTest()
+        public async Task TestBusIntegrationTest()
         {
             TestBusContext context = new TestBusContext();
             var sender = context.CreateCommandSender();
@@ -96,9 +90,6 @@ namespace Minor.Nijn.TestBus.Test
             var result = await sender.SendCommandAsync(mess, "queue");
 
             Assert.AreEqual("message2", result.Message);
-
-
-
         }
     }
 }

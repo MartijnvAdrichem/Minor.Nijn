@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -11,36 +9,44 @@ namespace Minor.Nijn.RabbitMQBus
     public class RabbitMQCommandReceiver : ICommandReceiver
     {
 
-        private IModel channel;
+        private IModel Channel { get; }
         public string QueueName { get; private set; }
-
         private readonly ILogger _log;
+        private bool _disposed = false;
 
         public RabbitMQCommandReceiver(RabbitMQBusContext context, string queueName)
         {
-            channel = context.Connection.CreateModel();
+            Channel = context.Connection.CreateModel();
             QueueName = queueName;
             _log = NijnLogger.CreateLogger<RabbitMQCommandReceiver>();
         }
         public void DeclareCommandQueue()
         {
+            CheckDisposed();
+
             _log.LogInformation("Declared a queue {0} for commands", QueueName);
-            channel.QueueDeclare(queue: QueueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
-            channel.BasicQos(0, 1, false);
-         
+            Channel.QueueDeclare(queue: QueueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
+            Channel.BasicQos(0, 1, false);
         }
 
         public void StartReceivingCommands(CommandReceivedCallback callback)
         {
-            var consumer = new EventingBasicConsumer(channel);
-            channel.BasicConsume(queue: QueueName, autoAck: false, consumer: consumer);
+            CheckDisposed();
 
-            consumer.Received += (model, ea) =>
+            var consumer = new EventingBasicConsumer(Channel);
+            Channel.BasicConsume(queue: QueueName,
+                                 autoAck: false,
+                                 consumerTag: "",
+                                 noLocal: false,
+                                 exclusive: false,
+                                 arguments: null,
+                                 consumer: consumer);
+
+            consumer.Received += (s, ea) =>
             {
-
                 var body = ea.Body;
                 var props = ea.BasicProperties;
-                var replyProps = channel.CreateBasicProperties();
+                var replyProps = Channel.CreateBasicProperties();
                 replyProps.CorrelationId = props.CorrelationId;
                 replyProps.Type = props.Type;
                 
@@ -53,27 +59,58 @@ namespace Minor.Nijn.RabbitMQBus
                 }
                 catch (Exception e)
                 {
-                    var realException = e.InnerException;
-                    response = new CommandMessage(realException.Message, realException.GetType().ToString(), props.CorrelationId);
-                    replyProps.Type = realException.GetType().ToString();
+                    var ie = e.InnerException;
+                    response = new CommandMessage(ie.Message, ie.GetType().ToString(), props.CorrelationId);
+                    replyProps.Type = ie.GetType().ToString();
                 }
                 finally
                 {
-                    channel.BasicPublish(exchange: "", routingKey: props.ReplyTo, basicProperties: replyProps, body: response?.EncodeMessage());
-                    channel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
+                    Channel.BasicPublish(exchange: "",
+                                         routingKey: props.ReplyTo,
+                                         mandatory: false,
+                                         basicProperties: replyProps,
+                                         body: response?.EncodeMessage());
+
+                    Channel.BasicAck(deliveryTag: ea.DeliveryTag,
+                                     multiple: false);
                 }
             };
             _log.LogInformation("Started listening for commands on queue {0} ", QueueName);
 
         }
 
+        #region Dispose
         public void Dispose()
         {
-            channel?.Close();
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+                return;
 
+            if (disposing)
+            {
+                Channel?.Dispose();
+            }
+
+            _disposed = true;
+        }
+
+        ~RabbitMQCommandReceiver()
+        {
+            Dispose(false);
+        }
+
+        private void CheckDisposed()
+        {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(GetType().FullName);
+            }
+        }
+        #endregion
     }
-
-
 }

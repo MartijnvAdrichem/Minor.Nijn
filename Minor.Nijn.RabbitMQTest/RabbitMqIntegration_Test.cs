@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Minor.Nijn.RabbitMQBus;
@@ -11,15 +9,24 @@ namespace Minor.Nijn.RabbitMQTest
     public class RabbitMqIntegration_Test
     {
         private RabbitMQBusContext _context;
+        private string _hostname = "192.168.99.100";
 
         [TestInitialize]
-        public void Setup()
+        public void TestInitialize()
         {
             var contextBuilder = new RabbitMQContextBuilder();
-            _context = contextBuilder.WithCredentials("guest", "guest").WithAddress("localhost", 5672).WithExchange("TestExchange1").CreateContext();
+            _context = contextBuilder.WithCredentials("guest", "guest")
+                                     .WithAddress(_hostname, 5672)
+                                     .WithExchange("TestExchange1")
+                                     .CreateContext();
         }
 
- 
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            _context.Dispose();
+        }
+
         [TestMethod]
         public void SendAndReceiveWithTopicsCorrectly()
         {
@@ -52,18 +59,14 @@ namespace Minor.Nijn.RabbitMQTest
         public void ThrowsExceptionWithMultipleQueueDeclare()
         {
             //Arrange
-
             var receiver = _context.CreateMessageReceiver("TestQueue", new List<string>() { "test" });
 
-            //Act
-            var action = new Action(() =>
+            //Act & Assert
+            var exception = Assert.ThrowsException<BusConfigurationException>(() =>
             {
                 receiver.DeclareQueue();
                 receiver.DeclareQueue();
             });
-
-            //Assert
-            var exception =  Assert.ThrowsException<BusConfigurationException>(action);
             Assert.AreEqual("Can't declare the queue multiple times", exception.Message);
         }
 
@@ -71,32 +74,16 @@ namespace Minor.Nijn.RabbitMQTest
         public void ThrowsExceptionWhenListeningMultipleTimes()
         {
             //Arrange
-
             var receiver = _context.CreateMessageReceiver("TestQueue", new List<string>() { "test" });
             receiver.DeclareQueue();
 
-            //Act
-            var action = new Action(() =>
+            //Act & Assert
+            var exception = Assert.ThrowsException<BusConfigurationException>(() =>
             {
-                receiver.StartReceivingMessages(message =>
-                {
-
-                });
-                receiver.StartReceivingMessages(message =>
-                {
-
-                });
+                receiver.StartReceivingMessages(message => { });
+                receiver.StartReceivingMessages(message => { });
             });
-
-            //Assert
-            var exception = Assert.ThrowsException<BusConfigurationException>(action);
             Assert.AreEqual("Can't start listening multiple times", exception.Message);
-        }
-
-        [TestCleanup]
-        public void Cleanup()
-        {
-            _context.Dispose();
         }
     }
 }

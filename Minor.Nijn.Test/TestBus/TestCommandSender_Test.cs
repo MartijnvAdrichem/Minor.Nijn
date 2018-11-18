@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Minor.Nijn.TestBus;
 
 namespace Minor.Nijn.TestBus.Test
 {
     [TestClass]
-    public class TestCommandSenderTest
+    public class TestCommandSender_Test
     {
-
         [TestMethod]
         public void CreateTestCommandSenderDeclaresNewQueue()
         {
@@ -20,11 +15,10 @@ namespace Minor.Nijn.TestBus.Test
            
             Assert.IsInstanceOfType(typeof(TestCommandSender), sender.GetType().BaseType);
             Assert.AreEqual(1, context.CommandQueues.Count);
-
         }
 
         [TestMethod]
-        public async Task SendCommandASyncTest()
+        public async Task SendCommandAsync()
         {
             TestBusContext context = new TestBusContext();
             var sender = (TestCommandSender) context.CreateCommandSender();

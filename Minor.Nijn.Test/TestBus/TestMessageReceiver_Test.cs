@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Minor.Nijn.TestBus;
 
 namespace Minor.Nijn.TestBus.Test
 {
     [TestClass]
-    public class TestMessageReceiverTest
+    public class TestMessageReceiver_Test
     {
-
         [TestMethod]
         public void MessageReceiverCallbackGetsCalledWhenMessageIsAddedOnQueue()
         {
@@ -77,7 +73,6 @@ namespace Minor.Nijn.TestBus.Test
             receiver.DeclareQueue();
 
             Assert.ThrowsException<BusConfigurationException>(() => receiver.DeclareQueue());
-
         }
 
         [TestMethod]
@@ -90,7 +85,6 @@ namespace Minor.Nijn.TestBus.Test
             receiver.StartReceivingMessages(null);
 
             Assert.ThrowsException<BusConfigurationException>(() => receiver.StartReceivingMessages(null));
-
         }
 
         [TestMethod]
@@ -101,7 +95,6 @@ namespace Minor.Nijn.TestBus.Test
             var receiver = context.CreateMessageReceiver("receiver", new List<string> { "#" });
 
             Assert.ThrowsException<KeyNotFoundException>(() => receiver.StartReceivingMessages(null));
-
         }
     }
 }

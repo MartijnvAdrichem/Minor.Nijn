@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Minor.Nijn.RabbitMQBus;
 
 namespace Minor.Nijn.WebScale
 {

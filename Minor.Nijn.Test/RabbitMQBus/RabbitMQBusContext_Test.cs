@@ -8,7 +8,7 @@ using RabbitMQ.Client;
 namespace Minor.Nijn.RabbitMQBus.Test
 {
     [TestClass]
-    public class RabbitMQBusContextTest
+    public class RabbitMQBusContext_Test
     {
         #region CreateMessageSender
         [TestMethod]

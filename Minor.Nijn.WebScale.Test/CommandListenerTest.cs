@@ -1,6 +1,4 @@
-using System;
 using System.Linq;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Minor.Nijn.RabbitMQBus;
 using Moq;
@@ -76,7 +74,6 @@ namespace Minor.Nijn.WebScale.Test
         [TestMethod]
         public void HandleTest()
         {
-
             var methodCommandInfo = new MethodCommandInfo(typeof(TestClass), 
                 typeof(TestClass).GetMethod("TestCalled"), 
                 typeof(TestClass).GetMethod("TestCalled").GetParameters().First(),
@@ -105,10 +102,6 @@ namespace Minor.Nijn.WebScale.Test
 
             var objectResult = JsonConvert.DeserializeObject<TestCommand>(result.Message);
             Assert.AreEqual("Message2", objectResult.Message);
-
         }
     }
-
-
 }
-

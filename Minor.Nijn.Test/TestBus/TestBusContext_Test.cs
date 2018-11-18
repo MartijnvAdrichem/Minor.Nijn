@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Minor.Nijn.TestBus;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Minor.Nijn.TestBus.Test
 {
     [TestClass]
-    public class TestBusContextTest
+    public class TestBusContext_Test
     {
-
         [TestMethod]
         public void CreateMessageSenderReturnsNewMessageSender()
         {

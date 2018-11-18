@@ -3,9 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using Microsoft.Extensions.DependencyInjection;
-using Minor.Nijn.RabbitMQBus;
 using Microsoft.Extensions.Logging;
 
 namespace Minor.Nijn.WebScale

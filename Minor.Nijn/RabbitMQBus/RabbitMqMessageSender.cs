@@ -24,17 +24,18 @@ namespace Minor.Nijn.RabbitMQBus
 
             _log.LogTrace($"Sending message to routing key {message.RoutingKey ?? ""}");
 
-            var body = message.EncodeMessage();
+            byte[] body = message.EncodeMessage();
 
-            var basicProperties = Channel.CreateBasicProperties();
+            IBasicProperties basicProperties = Channel.CreateBasicProperties();
             basicProperties.Timestamp = new AmqpTimestamp(message.Timestamp == 0 ? DateTime.Now.Ticks : message.Timestamp);
             basicProperties.CorrelationId = message.CorrelationId ?? Guid.NewGuid().ToString();
             basicProperties.Type = message.EventType ?? "";
 
             Channel.BasicPublish(exchange: ExchangeName,
-                                  routingKey: message.RoutingKey,
-                                  basicProperties: basicProperties,
-                                  body: body);
+                                 routingKey: message.RoutingKey,
+                                 mandatory: false,
+                                 basicProperties: basicProperties,
+                                 body: body);
         }
 
         #region Dispose
@@ -51,7 +52,7 @@ namespace Minor.Nijn.RabbitMQBus
 
             if (disposing)
             {
-                Channel.Dispose();
+                Channel?.Dispose();
             }
 
             disposed = true;

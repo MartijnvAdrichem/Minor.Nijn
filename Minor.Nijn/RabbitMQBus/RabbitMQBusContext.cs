@@ -69,7 +69,7 @@ namespace Minor.Nijn.RabbitMQBus
 
             if (disposing)
             {
-                Connection.Dispose();
+                Connection?.Dispose();
             }
 
             disposed = true;

@@ -37,7 +37,6 @@ namespace Minor.Nijn.RabbitMQBus
         public void DeclareQueue()
         {
             CheckDisposed();
-
             if (_queueDeclared)
             {
                 _log.LogWarning($"Trying to declare a queue ({QueueName}) twice");
@@ -50,9 +49,9 @@ namespace Minor.Nijn.RabbitMQBus
                 _log.LogInformation($"Queue {QueueName} is now listening on default routingKey");
 
                 Channel.QueueBind(queue: QueueName,
-                    exchange: ExchangeName,
-                    routingKey: "");
-
+                                  exchange: ExchangeName,
+                                  routingKey: "",
+                                  arguments: null);
             }
             else
             {
@@ -61,8 +60,9 @@ namespace Minor.Nijn.RabbitMQBus
                     _log.LogInformation($"Queue {QueueName} is now listening on {bindingKey}");
 
                     Channel.QueueBind(queue: QueueName,
-                        exchange: ExchangeName,
-                        routingKey: bindingKey);
+                                      exchange: ExchangeName,
+                                      routingKey: bindingKey,
+                                      arguments: null);
                 }
             }
 
@@ -93,8 +93,12 @@ namespace Minor.Nijn.RabbitMQBus
             };
 
             Channel.BasicConsume(queue: QueueName,
-                autoAck: true,
-                consumer: consumer);
+                                 autoAck: true,
+                                 consumerTag: "",
+                                 noLocal: false,
+                                 exclusive: false,
+                                 arguments: null,
+                                 consumer: consumer);
             _listening = true;
         }
 
@@ -112,7 +116,7 @@ namespace Minor.Nijn.RabbitMQBus
 
             if (disposing)
             {
-                Channel.Dispose();
+                Channel?.Dispose();
             }
 
             _disposed = true;
