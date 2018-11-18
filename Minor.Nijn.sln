@@ -1,0 +1,61 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2042
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Minor.Nijn", "Minor.Nijn\Minor.Nijn.csproj", "{57C7BE5E-16B7-40BF-9195-3B58A22A3A66}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Minor.Nijn.WebScale", "Minor.Nijn.WebScale\Minor.Nijn.WebScale.csproj", "{86F6782F-5106-4DCE-B08D-56774AD96074}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VoorbeeldMicroservice", "VoorbeeldMicroservice\VoorbeeldMicroservice.csproj", "{032091AC-07C6-4F01-B953-CEF43C403549}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "files", "files", "{88853DAD-5BCA-407D-B19E-6B43F4B14859}"
+	ProjectSection(SolutionItems) = preProject
+		Nijn Opdracht.md = Nijn Opdracht.md
+		RunRabbit.bat = RunRabbit.bat
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Minor.Nijn.Test", "Minor.Nijn.Test\Minor.Nijn.Test.csproj", "{846FA76D-2FF6-4639-822F-C03114940AAA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Minor.Nijn.WebScale.Test", "Minor.Nijn.WebScale.Test\Minor.Nijn.WebScale.Test.csproj", "{49037972-7DF0-451F-8C7F-C39406A6292D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Minor.Nijn.RabbitMQTest", "Minor.Nijn.RabbitMQTest\Minor.Nijn.RabbitMQTest.csproj", "{CCE58410-A357-4001-B2A7-609ADC3D3EC4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{57C7BE5E-16B7-40BF-9195-3B58A22A3A66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57C7BE5E-16B7-40BF-9195-3B58A22A3A66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57C7BE5E-16B7-40BF-9195-3B58A22A3A66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57C7BE5E-16B7-40BF-9195-3B58A22A3A66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86F6782F-5106-4DCE-B08D-56774AD96074}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86F6782F-5106-4DCE-B08D-56774AD96074}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86F6782F-5106-4DCE-B08D-56774AD96074}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86F6782F-5106-4DCE-B08D-56774AD96074}.Release|Any CPU.Build.0 = Release|Any CPU
+		{032091AC-07C6-4F01-B953-CEF43C403549}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{032091AC-07C6-4F01-B953-CEF43C403549}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{032091AC-07C6-4F01-B953-CEF43C403549}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{032091AC-07C6-4F01-B953-CEF43C403549}.Release|Any CPU.Build.0 = Release|Any CPU
+		{846FA76D-2FF6-4639-822F-C03114940AAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{846FA76D-2FF6-4639-822F-C03114940AAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{846FA76D-2FF6-4639-822F-C03114940AAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{846FA76D-2FF6-4639-822F-C03114940AAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49037972-7DF0-451F-8C7F-C39406A6292D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49037972-7DF0-451F-8C7F-C39406A6292D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49037972-7DF0-451F-8C7F-C39406A6292D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49037972-7DF0-451F-8C7F-C39406A6292D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCE58410-A357-4001-B2A7-609ADC3D3EC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCE58410-A357-4001-B2A7-609ADC3D3EC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCE58410-A357-4001-B2A7-609ADC3D3EC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCE58410-A357-4001-B2A7-609ADC3D3EC4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {65CC8ED6-1A87-446A-956E-AB4D9AD4C3B4}
+	EndGlobalSection
+EndGlobal
