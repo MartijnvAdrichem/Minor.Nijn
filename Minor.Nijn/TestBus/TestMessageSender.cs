@@ -4,11 +4,11 @@ namespace Minor.Nijn.TestBus
 {
     public class TestMessageSender : IMessageSender
     {
-        public TestBusContext BusContext { get; }
+        public TestBusContext Context { get; }
 
-        public TestMessageSender(TestBusContext busContext)
+        public TestMessageSender(TestBusContext context)
         {
-            BusContext = busContext;
+            Context = context;
         }
 
         public void SendMessage(IEventMessage message)
@@ -17,7 +17,7 @@ namespace Minor.Nijn.TestBus
             //casmva.#
             var senderExpression = message.RoutingKey ?? "";
 
-            foreach (var testQueue in BusContext.TestQueues.Values)
+            foreach (var testQueue in Context.TestQueues.Values)
             {
                 foreach (var topicExpression in testQueue.TopicExpressions)
                 {

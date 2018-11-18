@@ -7,14 +7,14 @@ namespace Minor.Nijn.TestBus
 {
     public class TestCommandReceiver : ICommandReceiver
     {
-        private readonly TestBusContext _testBusContext;
+        private TestBusContext Context { get; }
         private bool _isListening;
         private bool _isDeclared;
 
-        public TestCommandReceiver(TestBusContext testBusContext, string queueName)
+        public TestCommandReceiver(TestBusContext context, string queueName)
         {
             QueueName = queueName;
-            _testBusContext = testBusContext;
+            Context = context;
         }
 
         public string QueueName { get; }
@@ -26,7 +26,7 @@ namespace Minor.Nijn.TestBus
                 throw new BusConfigurationException("Already declared queue " + QueueName);
             }
 
-            _testBusContext.DeclareCommandQueue(QueueName);
+            Context.DeclareCommandQueue(QueueName);
             _isDeclared = true;
         }
 
@@ -38,7 +38,7 @@ namespace Minor.Nijn.TestBus
             }
             new Task(() =>
             {
-                var queue = _testBusContext.CommandQueues[QueueName];
+                var queue = Context.CommandQueues[QueueName];
 
                 while (true)
                 {
@@ -61,15 +61,15 @@ namespace Minor.Nijn.TestBus
                     }
                     finally
                     {
-                        _testBusContext.CommandQueues[command.Props.ReplyTo].Enqueue(new TestBusCommandMessage(response, 
+                        Context.CommandQueues[command.Props.ReplyTo].Enqueue(new TestBusCommandMessage(response,
                             new BasicProperties()
                             {
-                                CorrelationId =  command.Props.CorrelationId,
+                                CorrelationId = command.Props.CorrelationId,
                                 Type = command.Props.Type
                             }));
                     }
 
-                   
+
                 }
             }).Start();
             _isListening = true;
@@ -77,7 +77,6 @@ namespace Minor.Nijn.TestBus
 
         public void Dispose()
         {
-
         }
     }
 }

@@ -10,18 +10,18 @@ namespace Minor.Nijn
         public long Timestamp { get; }
         public string CorrelationId { get; }
 
-        public byte[] EncodeMessage()
-        {
-            return Encoding.UTF8.GetBytes(Message);
-        }
-
-        public EventMessage(string routingKey, string message, string eventType = null, long timestamp=0, string correlationId=null)
+        public EventMessage(string routingKey, string message, string eventType = null, long timestamp = 0, string correlationId = null)
         {
             RoutingKey = routingKey;
             Message = message;
             EventType = eventType;
             Timestamp = timestamp;
             CorrelationId = correlationId;
+        }
+
+        public byte[] EncodeMessage()
+        {
+            return Encoding.UTF8.GetBytes(Message);
         }
     }
 }
