@@ -8,7 +8,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Minor.Nijn.TestBus;
 using RabbitMQ.Client.Framing;
 
-namespace Minor.Nijn.Test.TestBus
+namespace Minor.Nijn.TestBus.Test
 {
     [TestClass]
     public class TestCommandReceiverTest

@@ -1,77 +1,295 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Minor.Nijn.RabbitMQBus;
+using Minor.Nijn.Test;
+using Moq;
+using RabbitMQ.Client;
 
-namespace Minor.Nijn.Test.RabbitMQBus
+namespace Minor.Nijn.RabbitMQBus.Test
 {
     [TestClass]
     public class RabbitMQContextBuilderTest
     {
-
+        #region WithExchange
         [TestMethod]
-        public void ContextBuilderSetExchangeTest()
+        public void WithExchange_WithCorrectExchangeName()
         {
-            var target = new RabbitMQContextBuilder();
-            target.WithExchange("bus");
-            
-            Assert.AreEqual("bus", target.ExchangeName);
+            // Arrange
+            var contextBuilder = new RabbitMQContextBuilder();
+
+            // Act
+            contextBuilder.WithExchange("AMX");
+
+            // Assert
+            Assert.AreEqual("AMX", contextBuilder.ExchangeName);
+        }
+        #endregion
+
+        #region WithAddress
+        [TestMethod]
+        public void WithAddress_WithCorrectHostnameAndPort()
+        {
+            // Arrange
+            var contextBuilder = new RabbitMQContextBuilder();
+
+            // Act
+            contextBuilder.WithAddress("localhost", 9000);
+
+            // Assert
+            Assert.AreEqual("localhost", contextBuilder.HostName);
+            Assert.AreEqual(9000, contextBuilder.Port);
+        }
+        #endregion
+
+        #region WithCredentials
+        [TestMethod]
+        public void WithCredentials_WithCorrectUsernameAndPassword()
+        {
+            // Arrange
+            var contextBuilder = new RabbitMQContextBuilder();
+
+            // Act
+            contextBuilder.WithCredentials("username", "password");
+
+            // Assert
+            Assert.AreEqual("username", contextBuilder.UserName);
+            string password = TestHelper.GetField<string>(contextBuilder, "_password");
+            Assert.AreEqual("password", password);
+        }
+        #endregion
+
+        #region ReadFromEnvironmentVariables
+        [TestMethod]
+        public void ReadFromEnvironmentVariables_WithCorrectExchangeName()
+        {
+            // Arrange
+            var contextBuilder = new RabbitMQContextBuilder();
+            Environment.SetEnvironmentVariable("ExchangeName", "AMX");
+
+            // Act
+            contextBuilder.ReadFromEnvironmentVariables();
+
+            // Assert
+            Assert.AreEqual("AMX", contextBuilder.ExchangeName);
+
+            // Cleanup
+            Environment.SetEnvironmentVariable("ExchangeName", null);
         }
 
         [TestMethod]
-        public void ContextBuilderSetUsernameAndPasswordTest()
+        public void ReadFromEnvironmentVariables_WithCorrectHostName()
         {
-            var target = new RabbitMQContextBuilder();
-            target.WithCredentials("guest", "secret");
-            
-            Assert.AreEqual("guest", target.UserName);
+            // Arrange
+            var contextBuilder = new RabbitMQContextBuilder();
+            Environment.SetEnvironmentVariable("HostName", "localhost");
+
+            // Act
+            contextBuilder.ReadFromEnvironmentVariables();
+
+            // Assert
+            Assert.AreEqual("localhost", contextBuilder.HostName);
+
+            // Cleanup
+            Environment.SetEnvironmentVariable("HostName", null);
         }
 
         [TestMethod]
-        public void ContextBuilderSetAdressTest()
+        public void ReadFromEnvironmentVariables_WithCorrectPort()
         {
-            var target = new RabbitMQContextBuilder();
-            target.WithAddress("localhost", 1234);
-            
-            Assert.AreEqual("localhost", target.HostName);
-            Assert.AreEqual(1234, target.Port);
+            // Arrange
+            var contextBuilder = new RabbitMQContextBuilder();
+            Environment.SetEnvironmentVariable("Port", "9000");
+
+            // Act
+            contextBuilder.ReadFromEnvironmentVariables();
+
+            // Assert
+            Assert.AreEqual(9000, contextBuilder.Port);
+
+            // Cleanup
+            Environment.SetEnvironmentVariable("Port", null);
         }
 
+        [TestMethod]
+        public void ReadFromEnvironmentVariables_WithCorrectUserName()
+        {
+            // Arrange
+            var contextBuilder = new RabbitMQContextBuilder();
+            Environment.SetEnvironmentVariable("UserName", "user");
+
+            // Act
+            contextBuilder.ReadFromEnvironmentVariables();
+
+            // Assert
+            Assert.AreEqual("user", contextBuilder.UserName);
+
+            // Cleanup
+            Environment.SetEnvironmentVariable("UserName", null);
+        }
 
         [TestMethod]
-        public void ContextBuilderReadFromEnvironment()
+        public void ReadFromEnvironmentVariables_WithCorrectPassword()
         {
-            Environment.SetEnvironmentVariable("EXCHANGENAME", "bus");
-            Environment.SetEnvironmentVariable("USERNAME", "guest");
-            Environment.SetEnvironmentVariable("HOSTNAME", "localhost");
-            Environment.SetEnvironmentVariable("PASSWORD", "secret");
-            Environment.SetEnvironmentVariable("PORT", "1234");
-            
-            var target = new RabbitMQContextBuilder();
-            target.ReadFromEnvironmentVariables();
+            // Arrange
+            var contextBuilder = new RabbitMQContextBuilder();
+            Environment.SetEnvironmentVariable("Password", "secret");
 
+            // Act
+            contextBuilder.ReadFromEnvironmentVariables();
 
-            Assert.AreEqual("bus", target.ExchangeName);
-            Assert.AreEqual("guest", target.UserName);
-            Assert.AreEqual("localhost", target.HostName);
-            Assert.AreEqual(1234, target.Port);
+            // Assert
+            string password = TestHelper.GetField<string>(contextBuilder, "_password");
+            Assert.AreEqual("secret", password);
+
+            // Cleanup
+            Environment.SetEnvironmentVariable("Password", null);
         }
 
         [TestMethod]
         public void ContextBuilderReadFromEnvironmentWithWrongPortThrowsException()
         {
+            // Arrange
             Environment.SetEnvironmentVariable("EXCHANGENAME", "bus");
             Environment.SetEnvironmentVariable("USERNAME", "guest");
             Environment.SetEnvironmentVariable("HOSTNAME", "localhost");
             Environment.SetEnvironmentVariable("PASSWORD", "secret");
             Environment.SetEnvironmentVariable("PORT", "fout");
-            
+            var contextBuilder = new RabbitMQContextBuilder();
 
-            var target = new RabbitMQContextBuilder();
-            Assert.ThrowsException<InvalidCastException>(() => { target.ReadFromEnvironmentVariables(); });
+            // Act & Assert
+            Assert.ThrowsException<InvalidCastException>(() =>
+            {
+                contextBuilder.ReadFromEnvironmentVariables();
+            });
+        }
+        #endregion
+
+        #region CreateContext
+        [TestMethod]
+        public void CreateContext_WithExchangeNameNull_ThrowsArgumentNullException()
+        {
+            // Arrange
+            var contextBuilder = new RabbitMQContextBuilder().WithAddress(null, 5672);
+
+            // Act & Assert
+            Assert.ThrowsException<ArgumentNullException>(() =>
+            {
+                contextBuilder.CreateContext();
+            });
         }
 
-     
+        [TestMethod]
+        public void CreateContext_WithExchangeNameEmptyString_ThrowsArgumentException()
+        {
+            // Arrange
+            var contextBuilder = new RabbitMQContextBuilder().WithAddress("", 5672);
+
+            // Act & Assert
+            var exception = Assert.ThrowsException<ArgumentException>(() =>
+            {
+                contextBuilder.CreateContext();
+            });
+            Assert.AreEqual(nameof(contextBuilder.HostName) + " was empty", exception.Message);
+        }
+
+        [TestMethod]
+        public void CreateContext_WithNegativePort_ThrowsArgumentOutOfRangeException()
+        {
+            // Arrange
+            var contextBuilder = new RabbitMQContextBuilder().WithAddress("localhost", -1);
+
+            // Act & Assert
+            var exception = Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
+            {
+                contextBuilder.CreateContext();
+            });
+            Assert.AreEqual(nameof(contextBuilder.Port), exception.ParamName);
+        }
+
+        [TestMethod]
+        public void CreateContext_WithPortHigherThan65535_ThrowsArgumentOutOfRangeException()
+        {
+            // Arrange
+            var contextBuilder = new RabbitMQContextBuilder().WithAddress("localhost", 65536);
+
+            // Act & Assert
+            var exception = Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
+            {
+                contextBuilder.CreateContext();
+            });
+            Assert.AreEqual(nameof(contextBuilder.Port), exception.ParamName);
+        }
+
+        [TestMethod]
+        public void CreateContext_DeclaresExchangeWithCorrectExchangeName()
+        {
+            // Arrange
+            var channelMock = new Mock<IModel>();
+            channelMock.Setup(c => c.ExchangeDeclare("Exchange3",
+                                                     "topic",
+                                                     false,
+                                                     false,
+                                                     null))
+                       .Verifiable();
+            var connectionMock = new Mock<IConnection>(MockBehavior.Strict);
+            connectionMock.Setup(c => c.CreateModel())
+                          .Returns(channelMock.Object);
+            var connectionFactoryMock = new Mock<IConnectionFactory>(MockBehavior.Strict);
+            connectionFactoryMock.Setup(f => f.CreateConnection())
+                                 .Returns(connectionMock.Object);
+            var contextBuilder = new RabbitMQContextBuilder().WithExchange("Exchange3");
+
+            // Act
+            TestHelper.InvokeMethod<RabbitMQBusContext>(contextBuilder,
+                                                        "CreateContext",
+                                                        connectionFactoryMock.Object);
+
+            // Assert
+            channelMock.VerifyAll();
+        }
+
+        [TestMethod]
+        public void CreateContext_ReturnsContextWithCorrectExchangeName()
+        {
+            // Arrange
+            var channelMock = new Mock<IModel>();
+            var connectionMock = new Mock<IConnection>(MockBehavior.Strict);
+            connectionMock.Setup(c => c.CreateModel())
+                          .Returns(channelMock.Object);
+            var connectionFactoryMock = new Mock<IConnectionFactory>(MockBehavior.Strict);
+            connectionFactoryMock.Setup(f => f.CreateConnection())
+                                 .Returns(connectionMock.Object);
+            var contextBuilder = new RabbitMQContextBuilder().WithExchange("Exchange3");
+
+            // Act
+            var context = TestHelper.InvokeMethod<RabbitMQBusContext>(contextBuilder,
+                                                                      "CreateContext",
+                                                                      connectionFactoryMock.Object);
+
+            // Assert
+            Assert.AreEqual("Exchange3", context.ExchangeName);
+        }
+
+        [TestMethod]
+        public void CreateContext_ReturnsContextWithCorrectConnection()
+        {
+            // Arrange
+            var channelMock = new Mock<IModel>();
+            var connectionMock = new Mock<IConnection>(MockBehavior.Strict);
+            connectionMock.Setup(c => c.CreateModel())
+                          .Returns(channelMock.Object);
+            var connectionFactoryMock = new Mock<IConnectionFactory>(MockBehavior.Strict);
+            connectionFactoryMock.Setup(f => f.CreateConnection())
+                                 .Returns(connectionMock.Object);
+            var contextBuilder = new RabbitMQContextBuilder().WithExchange("Exchange3");
+
+            // Act
+            var context = TestHelper.InvokeMethod<RabbitMQBusContext>(contextBuilder,
+                                                                      "CreateContext",
+                                                                      connectionFactoryMock.Object);
+
+            // Assert
+            Assert.AreEqual(connectionMock.Object, context.Connection);
+        }
+        #endregion
     }
 }

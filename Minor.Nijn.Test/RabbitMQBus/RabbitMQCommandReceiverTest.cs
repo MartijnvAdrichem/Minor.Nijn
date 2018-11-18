@@ -6,12 +6,11 @@ using Minor.Nijn.RabbitMQBus;
 using Moq;
 using RabbitMQ.Client;
 
-namespace Minor.Nijn.Test.RabbitMQBus
+namespace Minor.Nijn.RabbitMQBus.Test
 {
     [TestClass]
     public class RabbitMQCommandReceiverTest
     {
-
         [TestMethod]
         public void DeclareCommandQueueTest()
         {

@@ -1,58 +1,92 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Minor.Nijn.RabbitMQBus;
+using Minor.Nijn.Test;
 using Moq;
 using RabbitMQ.Client;
-using RabbitMQ.Client.Framing.Impl;
-using QueueDeclareOk = RabbitMQ.Client.QueueDeclareOk;
 
-namespace Minor.Nijn.Test.RabbitMQBus
+namespace Minor.Nijn.RabbitMQBus.Test
 {
     [TestClass]
     public class RabbitMQBusContextTest
     {
-        private IConnection connection;
-        [TestInitialize]
-        public void Initialize()
-        {
-            Mock connectionMock = new Mock<IConnection>();
-            connection = (IConnection)connectionMock.Object;
-
-        }
+        #region CreateMessageSender
         [TestMethod]
-        public void CreateMessageSenderReturnsNewMessageSender()
+        public void CreateMessageSender_ReturnsMessageSenderWithCorrectProperties()
         {
-            var context = new RabbitMQBusContext(connection, "bus");
-            var result = context.CreateMessageSender().GetType();
-
-            Assert.IsInstanceOfType(typeof(RabbitMQMessageSender), result.BaseType);
-        }
-
-        [TestMethod]
-        public void CreateMessageReceiverReturnsNewMessageReceiver()
-        {
-            var context = new RabbitMQBusContext(connection, "bus");
-            var result = context.CreateMessageReceiver("testQueue", new List<string>() {"#"});
-
-            Assert.IsInstanceOfType(typeof(RabbitMQMessageReceiver), result.GetType().BaseType);
-        }
-
-        [TestMethod]
-        public void CreateCommandReceiverReturnsNewCommandReceiver()
-        {
-
+            // Arrange
             var channelMock = new Mock<IModel>(MockBehavior.Strict);
             var connectionMock = new Mock<IConnection>(MockBehavior.Strict);
-            connectionMock.Setup(r => r.CreateModel())
-                .Returns(channelMock.Object)
-                .Verifiable();
+            connectionMock.Setup(c => c.CreateModel())
+                          .Returns(channelMock.Object);
 
-            var context = new RabbitMQBusContext(connectionMock.Object, "bus");
-            var result = context.CreateCommandReceiver("queue");
+            var context = new RabbitMQBusContext(connectionMock.Object, "TestExchange3");
 
-            Assert.IsInstanceOfType(typeof(RabbitMQCommandReceiver), result.GetType().BaseType);
+            // Act
+            RabbitMQMessageSender sender = (RabbitMQMessageSender)context.CreateMessageSender();
+
+            // Assert
+            Assert.AreEqual("TestExchange3", sender.ExchangeName);
+            IModel channel = TestHelper.GetProperty<IModel>(sender, "Channel");
+            Assert.AreEqual(channelMock.Object, channel);
         }
+
+        [TestMethod]
+        public void CreateMessageSender_WithBusContextDisposed_ThrowsObjectDisposedException()
+        {
+            // Arrange
+            var connectionMock = new Mock<IConnection>();
+
+            var context = new RabbitMQBusContext(connectionMock.Object, "TestExchange3");
+            context.Dispose();
+
+            // Act & Assert
+            Assert.ThrowsException<ObjectDisposedException>(() =>
+            {
+                context.CreateMessageSender();
+            });
+        }
+        #endregion
+
+        #region CreateMessageReceiver
+        [TestMethod]
+        public void CreateMessageReceiver_ReturnsMessageReceiverWithCorrectProperties()
+        {
+            // Arrange
+            var channelMock = new Mock<IModel>(MockBehavior.Strict);
+            var connectionMock = new Mock<IConnection>(MockBehavior.Strict);
+            connectionMock.Setup(c => c.CreateModel())
+                          .Returns(channelMock.Object);
+
+            var context = new RabbitMQBusContext(connectionMock.Object, "TestExchange4");
+            var topicExpressions = new List<string> { "topic.expression.a", "routing.key.b" };
+
+            // Act
+            RabbitMQMessageReceiver receiver = (RabbitMQMessageReceiver)context.CreateMessageReceiver("TestQueue", topicExpressions);
+
+            // Assert
+            Assert.AreEqual("TestExchange4", receiver.ExchangeName);
+            Assert.AreEqual("TestQueue", receiver.QueueName);
+            Assert.AreEqual(topicExpressions, receiver.TopicExpressions);
+            IModel channel = TestHelper.GetProperty<IModel>(receiver, "Channel");
+            Assert.AreEqual(channelMock.Object, channel);
+        }
+
+        [TestMethod]
+        public void CreateMessageReceiver_WithBusContextDisposed_ThrowsObjectDisposedException()
+        {
+            // Arrange
+            var connectionMock = new Mock<IConnection>();
+
+            var context = new RabbitMQBusContext(connectionMock.Object, "TestExchange3");
+            context.Dispose();
+
+            // Act & Assert
+            Assert.ThrowsException<ObjectDisposedException>(() =>
+            {
+                context.CreateMessageReceiver("TestQueue", new List<string> { "topic.expression.a", "routing.key.b" });
+            });
+        }
+        #endregion
     }
 }

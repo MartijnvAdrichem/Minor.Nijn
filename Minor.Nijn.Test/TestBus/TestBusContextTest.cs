@@ -4,7 +4,7 @@ using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Minor.Nijn.TestBus;
 
-namespace Minor.Nijn.Test.TestBus
+namespace Minor.Nijn.TestBus.Test
 {
     [TestClass]
     public class TestBusContextTest

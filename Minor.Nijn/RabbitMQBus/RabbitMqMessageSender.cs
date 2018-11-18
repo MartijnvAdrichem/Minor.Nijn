@@ -1,45 +1,74 @@
 ﻿using RabbitMQ.Client;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Extensions.Logging;
-using RabbitMQ.Client.Framing;
 
 namespace Minor.Nijn.RabbitMQBus
 {
     public class RabbitMQMessageSender : IMessageSender
     {
-        private readonly string _exchangeName;
-        private readonly IModel _channel;
+        public string ExchangeName { get; }
+        private IModel Channel { get; }
         private readonly ILogger _log;
+        private bool disposed = false;
+
         public RabbitMQMessageSender(RabbitMQBusContext context)
         {
-            _channel = context.Connection.CreateModel();
-            _exchangeName = context.ExchangeName;
+            Channel = context.Connection.CreateModel();
+            ExchangeName = context.ExchangeName;
             _log = NijnLogger.CreateLogger<RabbitMQMessageSender>();
-
         }
 
         public void SendMessage(IEventMessage message)
         {
+            CheckDisposed();
+
             _log.LogTrace($"Sending message to routing key {message.RoutingKey ?? ""}");
 
             var body = message.EncodeMessage();
 
-            var basicProperties = _channel.CreateBasicProperties();
-            basicProperties.Timestamp = new RabbitMQ.Client.AmqpTimestamp(message.Timestamp == 0 ? DateTime.Now.Ticks : message.Timestamp);
-            basicProperties.CorrelationId = message.CorrelationId == null ? Guid.NewGuid().ToString() : message.CorrelationId;
+            var basicProperties = Channel.CreateBasicProperties();
+            basicProperties.Timestamp = new AmqpTimestamp(message.Timestamp == 0 ? DateTime.Now.Ticks : message.Timestamp);
+            basicProperties.CorrelationId = message.CorrelationId ?? Guid.NewGuid().ToString();
             basicProperties.Type = message.EventType ?? "";
 
-            _channel.BasicPublish(exchange: _exchangeName,
+            Channel.BasicPublish(exchange: ExchangeName,
                                   routingKey: message.RoutingKey,
                                   basicProperties: basicProperties,
                                   body: body);
         }
 
+        #region Dispose
         public void Dispose()
         {
-            _channel?.Close();
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed)
+                return;
+
+            if (disposing)
+            {
+                Channel.Dispose();
+            }
+
+            disposed = true;
+        }
+
+        ~RabbitMQMessageSender()
+        {
+            Dispose(false);
+        }
+
+        private void CheckDisposed()
+        {
+            if (disposed)
+            {
+                throw new ObjectDisposedException(GetType().FullName);
+            }
+        }
+        #endregion
     }
 }

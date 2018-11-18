@@ -10,13 +10,13 @@ namespace Minor.Nijn.RabbitMQBus
 {
     public class RabbitMQMessageReceiver : IMessageReceiver
     {
-        private IModel _channel;
-        private string _exchangeName;
+        private IModel Channel { get; }
+        public string ExchangeName { get; }
         private bool _listening;
         private bool _queueDeclared;
         public string QueueName { get; }
         public IEnumerable<string> TopicExpressions { get; }
-
+        private bool _disposed = false;
         private readonly ILogger _log;
 
 
@@ -26,9 +26,9 @@ namespace Minor.Nijn.RabbitMQBus
 
             QueueName = queueName;
             TopicExpressions = topicExpressions;
-            _channel = context.Connection.CreateModel();
+            Channel = context.Connection.CreateModel();
 
-            _exchangeName = context.ExchangeName;
+            ExchangeName = context.ExchangeName;
 
             _listening = false;
             _queueDeclared = false;
@@ -36,19 +36,21 @@ namespace Minor.Nijn.RabbitMQBus
 
         public void DeclareQueue()
         {
+            CheckDisposed();
+
             if (_queueDeclared)
             {
                 _log.LogWarning($"Trying to declare a queue ({QueueName}) twice");
                 throw new BusConfigurationException("Can't declare the queue multiple times");
             }
 
-            _channel.QueueDeclare(QueueName, true, false, false);
+            Channel.QueueDeclare(QueueName, true, false, false);
             if (TopicExpressions == null || !TopicExpressions.Any())
             {
                 _log.LogInformation($"Queue {QueueName} is now listening on default routingKey");
 
-                _channel.QueueBind(queue: QueueName,
-                    exchange: _exchangeName,
+                Channel.QueueBind(queue: QueueName,
+                    exchange: ExchangeName,
                     routingKey: "");
 
             }
@@ -58,8 +60,8 @@ namespace Minor.Nijn.RabbitMQBus
                 {
                     _log.LogInformation($"Queue {QueueName} is now listening on {bindingKey}");
 
-                    _channel.QueueBind(queue: QueueName,
-                        exchange: _exchangeName,
+                    Channel.QueueBind(queue: QueueName,
+                        exchange: ExchangeName,
                         routingKey: bindingKey);
                 }
             }
@@ -69,13 +71,18 @@ namespace Minor.Nijn.RabbitMQBus
 
         public void StartReceivingMessages(EventMessageReceivedCallback callback)
         {
+            CheckDisposed();
             if (_listening)
             {
                 _log.LogWarning($"Trying to start listening to ({QueueName}) twice");
                 throw new BusConfigurationException("Can't start listening multiple times");
             }
-            var consumer = new EventingBasicConsumer(_channel);
+            if (callback == null)
+            {
+                throw new ArgumentNullException(nameof(callback));
+            }
 
+            var consumer = new EventingBasicConsumer(Channel);
             consumer.Received += (model, ea) =>
             {
                 var body = ea.Body;
@@ -85,15 +92,44 @@ namespace Minor.Nijn.RabbitMQBus
                 callback(eventMessage);
             };
 
-            _channel.BasicConsume(queue: QueueName,
+            Channel.BasicConsume(queue: QueueName,
                 autoAck: true,
                 consumer: consumer);
             _listening = true;
         }
 
+        #region Dispose
         public void Dispose()
         {
-            _channel?.Close();
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+                return;
+
+            if (disposing)
+            {
+                Channel.Dispose();
+            }
+
+            _disposed = true;
+        }
+
+        ~RabbitMQMessageReceiver()
+        {
+            Dispose(false);
+        }
+
+        private void CheckDisposed()
+        {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(GetType().FullName);
+            }
+        }
+        #endregion
     }
 }
