@@ -1,6 +1,6 @@
-﻿using System.Linq;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Minor.Nijn.TestBus.Test
 {
@@ -10,9 +10,9 @@ namespace Minor.Nijn.TestBus.Test
         [TestMethod]
         public void CreateTestCommandSenderDeclaresNewQueue()
         {
-           TestBusContext context = new TestBusContext();
-           var sender = context.CreateCommandSender();
-           
+            TestBusContext context = new TestBusContext();
+            var sender = context.CreateCommandSender();
+
             Assert.IsInstanceOfType(typeof(TestCommandSender), sender.GetType().BaseType);
             Assert.AreEqual(1, context.CommandQueues.Count);
         }
@@ -21,7 +21,7 @@ namespace Minor.Nijn.TestBus.Test
         public async Task SendCommandAsync()
         {
             TestBusContext context = new TestBusContext();
-            var sender = (TestCommandSender) context.CreateCommandSender();
+            var sender = (TestCommandSender)context.CreateCommandSender();
 
             var generatedQueue = context.CommandQueues.First().Value;
 

@@ -1,7 +1,7 @@
-﻿using System;
+﻿using RabbitMQ.Client.Framing;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using RabbitMQ.Client.Framing;
 
 namespace Minor.Nijn.TestBus
 {

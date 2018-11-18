@@ -1,8 +1,8 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Minor.Nijn.Test;
 using Moq;
 using RabbitMQ.Client;
+using System;
 
 namespace Minor.Nijn.RabbitMQBus.Test
 {
@@ -52,7 +52,7 @@ namespace Minor.Nijn.RabbitMQBus.Test
 
             // Assert
             Assert.AreEqual("username", contextBuilder.UserName);
-            string password = TestHelper.GetField<string>(contextBuilder, "_password");
+            string password = TestHelper.GetPrivateField<string>(contextBuilder, "_password");
             Assert.AreEqual("password", password);
         }
         #endregion
@@ -137,7 +137,7 @@ namespace Minor.Nijn.RabbitMQBus.Test
             contextBuilder.ReadFromEnvironmentVariables();
 
             // Assert
-            string password = TestHelper.GetField<string>(contextBuilder, "_password");
+            string password = TestHelper.GetPrivateField<string>(contextBuilder, "_password");
             Assert.AreEqual("secret", password);
 
             // Cleanup

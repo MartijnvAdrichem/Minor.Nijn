@@ -1,13 +1,13 @@
-using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
+using System.Linq;
 
 namespace Minor.Nijn.WebScale.Test
 {
     [TestClass]
-    public class CommandListenerTest
+    public class CommandListener_Test
     {
         [TestMethod]
         public void CommandListenerConstructorTest()

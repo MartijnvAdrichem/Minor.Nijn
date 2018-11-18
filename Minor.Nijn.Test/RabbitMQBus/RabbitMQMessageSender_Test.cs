@@ -29,7 +29,7 @@ namespace Minor.Nijn.RabbitMQBus.Test
 
             // Assert
             Assert.AreEqual("ExchangeName", sender.ExchangeName);
-            IModel channel = TestHelper.GetProperty<IModel>(sender, "Channel");
+            IModel channel = TestHelper.GetPrivateProperty<IModel>(sender, "Channel");
             Assert.AreEqual(channelMock.Object, channel);
         }
         #endregion

@@ -1,7 +1,7 @@
-﻿using RabbitMQ.Client;
+﻿using Microsoft.Extensions.Logging;
+using RabbitMQ.Client;
 using System;
 using System.Collections.Generic;
-using Microsoft.Extensions.Logging;
 
 namespace Minor.Nijn.RabbitMQBus
 {

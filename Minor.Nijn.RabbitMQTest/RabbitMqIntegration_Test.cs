@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Minor.Nijn.RabbitMQBus;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace Minor.Nijn.RabbitMQTest
 {

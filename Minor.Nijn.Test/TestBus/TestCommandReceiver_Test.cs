@@ -1,8 +1,8 @@
-﻿using System.Linq;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using RabbitMQ.Client.Framing;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using RabbitMQ.Client.Framing;
 
 namespace Minor.Nijn.TestBus.Test
 {
@@ -15,7 +15,7 @@ namespace Minor.Nijn.TestBus.Test
             TestBusContext context = new TestBusContext();
             var target = context.CreateCommandReceiver("queue");
 
-            Assert.AreEqual("queue" ,target.QueueName);
+            Assert.AreEqual("queue", target.QueueName);
         }
 
         [TestMethod]
@@ -25,8 +25,8 @@ namespace Minor.Nijn.TestBus.Test
             var target = context.CreateCommandReceiver("queue");
             target.DeclareCommandQueue();
 
-            Assert.AreEqual(1 ,context.CommandQueues.Count);
-            Assert.AreEqual("queue" ,context.CommandQueues.First().Key);
+            Assert.AreEqual(1, context.CommandQueues.Count);
+            Assert.AreEqual("queue", context.CommandQueues.First().Key);
         }
 
         [TestMethod]
@@ -44,7 +44,7 @@ namespace Minor.Nijn.TestBus.Test
                 return cm;
             });
 
-            context.CommandQueues["queue"].Enqueue(new TestBusCommandMessage(new CommandMessage("message", null, null), new BasicProperties() {ReplyTo = "responseQueue"} ));
+            context.CommandQueues["queue"].Enqueue(new TestBusCommandMessage(new CommandMessage("message", null, null), new BasicProperties() { ReplyTo = "responseQueue" }));
 
             bool succes = autoReset.WaitOne(5000);
             Assert.IsTrue(succes);
@@ -59,8 +59,8 @@ namespace Minor.Nijn.TestBus.Test
             TestBusContext context = new TestBusContext();
             var receiver = context.CreateCommandReceiver("queue");
             receiver.DeclareCommandQueue();
-            receiver.StartReceivingCommands((cm) => { return cm;});
-           Assert.ThrowsException<BusConfigurationException>(() => receiver.StartReceivingCommands((cm) => { return cm;}));
+            receiver.StartReceivingCommands((cm) => { return cm; });
+            Assert.ThrowsException<BusConfigurationException>(() => receiver.StartReceivingCommands((cm) => { return cm; }));
         }
 
         [TestMethod]
@@ -69,8 +69,8 @@ namespace Minor.Nijn.TestBus.Test
             TestBusContext context = new TestBusContext();
             var receiver = context.CreateCommandReceiver("queue");
             receiver.DeclareCommandQueue();
-            
-           Assert.ThrowsException<BusConfigurationException>(() => receiver.DeclareCommandQueue());
+
+            Assert.ThrowsException<BusConfigurationException>(() => receiver.DeclareCommandQueue());
         }
 
         [TestMethod]
@@ -80,12 +80,12 @@ namespace Minor.Nijn.TestBus.Test
             var sender = context.CreateCommandSender();
             var receiver = context.CreateCommandReceiver("queue");
             receiver.DeclareCommandQueue();
-           receiver.StartReceivingCommands((cm) =>
-           {
-               var message = "message2";
-               return new CommandMessage(message, cm.MessageType, cm.CorrelationId);
-           });
-            
+            receiver.StartReceivingCommands((cm) =>
+            {
+                var message = "message2";
+                return new CommandMessage(message, cm.MessageType, cm.CorrelationId);
+            });
+
             var mess = new CommandMessage("message", null, null);
             var result = await sender.SendCommandAsync(mess, "queue");
 

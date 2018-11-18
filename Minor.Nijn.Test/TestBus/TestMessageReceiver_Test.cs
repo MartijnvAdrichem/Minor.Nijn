@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Minor.Nijn.TestBus.Test
 {
@@ -13,7 +13,7 @@ namespace Minor.Nijn.TestBus.Test
         {
             var context = new TestBusContext();
 
-            var receiver = context.CreateMessageReceiver("receiver", new List<string>{"#"});
+            var receiver = context.CreateMessageReceiver("receiver", new List<string> { "#" });
             var autoResetEvent = new AutoResetEvent(false);
             IEventMessage message = null;
 
@@ -21,14 +21,15 @@ namespace Minor.Nijn.TestBus.Test
             receiver.StartReceivingMessages((e) =>
             {
                 message = e;
-                autoResetEvent.Set(); });
+                autoResetEvent.Set();
+            });
 
             context.TestQueues["receiver"].Queue.Enqueue(new EventMessage("message", "message sending"));
 
             autoResetEvent.WaitOne();
 
             Assert.IsNotNull(message);
-            Assert.AreEqual("message sending", message.Message );
+            Assert.AreEqual("message sending", message.Message);
         }
 
         [TestMethod]
@@ -36,7 +37,7 @@ namespace Minor.Nijn.TestBus.Test
         {
             var context = new TestBusContext();
 
-            var receiver = context.CreateMessageReceiver("receiver", new List<string>{"#"});
+            var receiver = context.CreateMessageReceiver("receiver", new List<string> { "#" });
             var autoResetEvent = new AutoResetEvent(false);
             var messages = new List<IEventMessage>();
 
@@ -79,7 +80,7 @@ namespace Minor.Nijn.TestBus.Test
         public void MessageReceiverCallingStartReceivingTwiceThrowsException()
         {
             var context = new TestBusContext();
-            
+
             var receiver = context.CreateMessageReceiver("receiver", new List<string> { "#" });
             receiver.DeclareQueue();
             receiver.StartReceivingMessages(null);
@@ -91,7 +92,7 @@ namespace Minor.Nijn.TestBus.Test
         public void MessageReceiverReturnsExceptionWhenNoQueueIsDefined()
         {
             var context = new TestBusContext();
-            
+
             var receiver = context.CreateMessageReceiver("receiver", new List<string> { "#" });
 
             Assert.ThrowsException<KeyNotFoundException>(() => receiver.StartReceivingMessages(null));

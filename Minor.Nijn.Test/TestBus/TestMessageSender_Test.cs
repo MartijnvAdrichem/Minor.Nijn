@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 
 namespace Minor.Nijn.TestBus.Test
 {
@@ -10,10 +10,10 @@ namespace Minor.Nijn.TestBus.Test
         [TestMethod]
         public void IsTopicMatchTest()
         {
-            Assert.IsTrue(TestMessageSender.IsTopicMatch("Minor.Nijn.BerichtVerstuurd","Minor.Nijn.BerichtVerstuurd"));
-            Assert.IsTrue(TestMessageSender.IsTopicMatch("Minor.Nijn.*","Minor.Nijn.BerichtVerstuurd"));
-            Assert.IsTrue(TestMessageSender.IsTopicMatch("Minor.*.*","Minor.Nijn.BerichtVerstuurd"));
-            Assert.IsTrue(TestMessageSender.IsTopicMatch("*.*.*","Minor.Nijn.BerichtVerstuurd"));
+            Assert.IsTrue(TestMessageSender.IsTopicMatch("Minor.Nijn.BerichtVerstuurd", "Minor.Nijn.BerichtVerstuurd"));
+            Assert.IsTrue(TestMessageSender.IsTopicMatch("Minor.Nijn.*", "Minor.Nijn.BerichtVerstuurd"));
+            Assert.IsTrue(TestMessageSender.IsTopicMatch("Minor.*.*", "Minor.Nijn.BerichtVerstuurd"));
+            Assert.IsTrue(TestMessageSender.IsTopicMatch("*.*.*", "Minor.Nijn.BerichtVerstuurd"));
             Assert.IsTrue(TestMessageSender.IsTopicMatch("Minor.Nijn.#", "Minor.Nijn.BerichtVerstuurd"));
             Assert.IsTrue(TestMessageSender.IsTopicMatch("Minor.#", "Minor.Nijn.BerichtVerstuurd"));
             Assert.IsTrue(TestMessageSender.IsTopicMatch("#", "Minor.Nijn.BerichtVerstuurd"));
@@ -32,8 +32,8 @@ namespace Minor.Nijn.TestBus.Test
             var context = new TestBusContext();
 
             var sender = context.CreateMessageSender();
-            context.DeclareQueue("receiver1", new List<string>{"receiver.info"});
-            context.DeclareQueue("receiver2", new List<string>{"receiver.*.info"});
+            context.DeclareQueue("receiver1", new List<string> { "receiver.info" });
+            context.DeclareQueue("receiver2", new List<string> { "receiver.*.info" });
 
             var message = new EventMessage("receiver.info", "receiver");
             sender.SendMessage(message);

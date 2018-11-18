@@ -1,8 +1,8 @@
-﻿using Minor.Nijn.WebScale;
+﻿using Minor.Nijn;
+using Minor.Nijn.WebScale;
+using Newtonsoft.Json;
 using System;
 using System.Threading;
-using Minor.Nijn;
-using Newtonsoft.Json;
 
 namespace VoorbeeldMicroservice
 {

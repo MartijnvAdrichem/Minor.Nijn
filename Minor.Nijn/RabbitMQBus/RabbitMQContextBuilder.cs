@@ -1,7 +1,7 @@
-﻿using RabbitMQ.Client;
-using System;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
+using RabbitMQ.Client;
 using RabbitMQ.Client.Exceptions;
+using System;
 
 namespace Minor.Nijn.RabbitMQBus
 {

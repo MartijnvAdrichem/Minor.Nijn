@@ -12,11 +12,11 @@ namespace Minor.Nijn.Test
         /// <param name="instance"></param>
         /// <param name="propertyName"></param>
         /// <returns></returns>
-        public static T GetProperty<T>(object instance, string propertyName)
+        public static T GetPrivateProperty<T>(object instance, string propertyName)
         {
             Type type = instance.GetType();
             PropertyInfo property = type.GetProperty(propertyName,
-                                                     BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty);
+                                                     BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.GetProperty);
             MethodInfo getter = property.GetGetMethod(nonPublic: true);
             return (T)getter.Invoke(instance, null);
         }
@@ -28,16 +28,16 @@ namespace Minor.Nijn.Test
         /// <param name="instance"></param>
         /// <param name="fieldName"></param>
         /// <returns></returns>
-        public static T GetField<T>(object instance, string fieldName)
+        public static T GetPrivateField<T>(object instance, string fieldName)
         {
             Type type = instance.GetType();
             FieldInfo field = type.GetField(fieldName,
-                                            BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField);
+                                            BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.GetField);
             return (T)field.GetValue(instance);
         }
 
         /// <summary>
-        /// Invokes a private method and returns
+        /// Invokes a private method and returns the return value
         /// </summary>
         /// <typeparam name="T">return type</typeparam>
         /// <param name="instance"></param>
@@ -47,7 +47,8 @@ namespace Minor.Nijn.Test
         public static T InvokeMethod<T>(object instance, string methodName, params object[] parameters)
         {
             Type type = instance.GetType();
-            MethodInfo method = type.GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+            MethodInfo method = type.GetMethod(methodName,
+                                               BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
             return (T)method.Invoke(instance, parameters);
         }
     }

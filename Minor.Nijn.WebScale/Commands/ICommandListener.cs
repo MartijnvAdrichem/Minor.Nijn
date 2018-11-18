@@ -1,5 +1,5 @@
-﻿using System;
-using RabbitMQ.Client;
+﻿using RabbitMQ.Client;
+using System;
 
 namespace Minor.Nijn.WebScale
 {

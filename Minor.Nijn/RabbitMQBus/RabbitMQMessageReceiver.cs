@@ -1,10 +1,10 @@
-﻿using RabbitMQ.Client;
+﻿using Microsoft.Extensions.Logging;
+using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Microsoft.Extensions.Logging;
-using RabbitMQ.Client.Events;
 
 namespace Minor.Nijn.RabbitMQBus
 {

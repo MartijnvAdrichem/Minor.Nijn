@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Minor.Nijn.Test;
 using Moq;
 using RabbitMQ.Client;
+using System;
+using System.Collections.Generic;
 
 namespace Minor.Nijn.RabbitMQBus.Test
 {
@@ -27,7 +27,7 @@ namespace Minor.Nijn.RabbitMQBus.Test
 
             // Assert
             Assert.AreEqual("TestExchange3", sender.ExchangeName);
-            IModel channel = TestHelper.GetProperty<IModel>(sender, "Channel");
+            IModel channel = TestHelper.GetPrivateProperty<IModel>(sender, "Channel");
             Assert.AreEqual(channelMock.Object, channel);
         }
 
@@ -68,7 +68,7 @@ namespace Minor.Nijn.RabbitMQBus.Test
             Assert.AreEqual("TestExchange4", receiver.ExchangeName);
             Assert.AreEqual("TestQueue", receiver.QueueName);
             Assert.AreEqual(topicExpressions, receiver.TopicExpressions);
-            IModel channel = TestHelper.GetProperty<IModel>(receiver, "Channel");
+            IModel channel = TestHelper.GetPrivateProperty<IModel>(receiver, "Channel");
             Assert.AreEqual(channelMock.Object, channel);
         }
 
