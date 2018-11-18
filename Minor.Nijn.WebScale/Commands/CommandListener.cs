@@ -1,5 +1,4 @@
 ﻿using System;
-using Minor.Nijn.RabbitMQBus;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 

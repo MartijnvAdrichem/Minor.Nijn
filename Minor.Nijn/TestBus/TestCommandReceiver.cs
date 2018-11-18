@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Minor.Nijn.RabbitMQBus;
 using RabbitMQ.Client.Framing;
 
 namespace Minor.Nijn.TestBus

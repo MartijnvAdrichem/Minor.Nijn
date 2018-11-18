@@ -1,6 +1,5 @@
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Minor.Nijn.RabbitMQBus;
 using Moq;
 using Newtonsoft.Json;
 using RabbitMQ.Client;

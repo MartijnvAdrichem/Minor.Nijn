@@ -11,6 +11,5 @@ namespace Minor.Nijn.TestBus
         {
             TopicExpressions = topicExpressions;
         }
-
     }
 }
