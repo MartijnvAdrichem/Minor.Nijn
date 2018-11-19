@@ -83,7 +83,7 @@ namespace Minor.Nijn.RabbitMQBus
         ///  - a declared Topic-Exchange (based on ExchangeName)
         /// </summary>
         /// <returns></returns>
-        public RabbitMQBusContext CreateContext()
+        public RabbitMQBusContext CreateContext(IConnectionFactory factory = null)
         {
             _log.LogInformation("Creating RabbitMQ Connection");
             if (HostName == null)
@@ -99,18 +99,14 @@ namespace Minor.Nijn.RabbitMQBus
                 throw new ArgumentOutOfRangeException(nameof(Port));
             }
 
-            var factory = new ConnectionFactory() {
+            factory = factory ?? new ConnectionFactory()
+            {
                 HostName = HostName,
                 UserName = UserName,
                 Password = _password,
                 Port = Port
             };
 
-            return CreateContext(factory);
-        }
-
-        private RabbitMQBusContext CreateContext(IConnectionFactory factory)
-        {
             try
             {
                 var connection = factory.CreateConnection();

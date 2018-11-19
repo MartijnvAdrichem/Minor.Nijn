@@ -236,12 +236,11 @@ namespace Minor.Nijn.RabbitMQBus.Test
             var connectionFactoryMock = new Mock<IConnectionFactory>(MockBehavior.Strict);
             connectionFactoryMock.Setup(f => f.CreateConnection())
                                  .Returns(connectionMock.Object);
-            var contextBuilder = new RabbitMQContextBuilder().WithExchange("Exchange3");
+            var contextBuilder = new RabbitMQContextBuilder().WithExchange("Exchange3")
+                                                             .WithAddress("localhost", 5672);
 
             // Act
-            TestHelper.InvokeMethod<RabbitMQBusContext>(contextBuilder,
-                                                        "CreateContext",
-                                                        connectionFactoryMock.Object);
+            var context = contextBuilder.CreateContext(connectionFactoryMock.Object);
 
             // Assert
             channelMock.VerifyAll();
@@ -258,12 +257,11 @@ namespace Minor.Nijn.RabbitMQBus.Test
             var connectionFactoryMock = new Mock<IConnectionFactory>(MockBehavior.Strict);
             connectionFactoryMock.Setup(f => f.CreateConnection())
                                  .Returns(connectionMock.Object);
-            var contextBuilder = new RabbitMQContextBuilder().WithExchange("Exchange3");
+            var contextBuilder = new RabbitMQContextBuilder().WithExchange("Exchange3")
+                                                             .WithAddress("localhost", 5672);
 
             // Act
-            var context = TestHelper.InvokeMethod<RabbitMQBusContext>(contextBuilder,
-                                                                      "CreateContext",
-                                                                      connectionFactoryMock.Object);
+            var context = contextBuilder.CreateContext(connectionFactoryMock.Object);
 
             // Assert
             Assert.AreEqual("Exchange3", context.ExchangeName);
@@ -280,12 +278,11 @@ namespace Minor.Nijn.RabbitMQBus.Test
             var connectionFactoryMock = new Mock<IConnectionFactory>(MockBehavior.Strict);
             connectionFactoryMock.Setup(f => f.CreateConnection())
                                  .Returns(connectionMock.Object);
-            var contextBuilder = new RabbitMQContextBuilder().WithExchange("Exchange3");
+            var contextBuilder = new RabbitMQContextBuilder().WithExchange("Exchange3")
+                                                             .WithAddress("localhost", 5672);
 
             // Act
-            var context = TestHelper.InvokeMethod<RabbitMQBusContext>(contextBuilder,
-                                                                      "CreateContext",
-                                                                      connectionFactoryMock.Object);
+            var context = contextBuilder.CreateContext(connectionFactoryMock.Object);
 
             // Assert
             Assert.AreEqual(connectionMock.Object, context.Connection);
