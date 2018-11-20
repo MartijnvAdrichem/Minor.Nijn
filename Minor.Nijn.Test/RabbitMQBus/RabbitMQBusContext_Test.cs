@@ -10,7 +10,6 @@ namespace Minor.Nijn.RabbitMQBus.Test
     [TestClass]
     public class RabbitMQBusContext_Test
     {
-        #region CreateMessageSender
         [TestMethod]
         public void CreateMessageSender_ReturnsMessageSenderWithCorrectProperties()
         {
@@ -46,9 +45,7 @@ namespace Minor.Nijn.RabbitMQBus.Test
                 context.CreateMessageSender();
             });
         }
-        #endregion
 
-        #region CreateMessageReceiver
         [TestMethod]
         public void CreateMessageReceiver_ReturnsMessageReceiverWithCorrectProperties()
         {
@@ -87,6 +84,5 @@ namespace Minor.Nijn.RabbitMQBus.Test
                 context.CreateMessageReceiver("TestQueue", new List<string> { "topic.expression.a", "routing.key.b" });
             });
         }
-        #endregion
     }
 }

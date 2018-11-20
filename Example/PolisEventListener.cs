@@ -8,6 +8,7 @@ using Minor.Nijn.WebScale.Attributes;
 namespace VoorbeeldMicroservice
 {
     [EventListener("MVM.TestService.PolisEventListenerQueue")]
+    [CommandListener]
     public class PolisEventListener
     {
         private readonly IDataMapper mapper;
@@ -23,7 +24,7 @@ namespace VoorbeeldMicroservice
         [Command("Testje")]
         public int CommandListner(TestCommand evt)
         {
-            Thread.Sleep(5000);
+            //Thread.Sleep(1000);
             Console.WriteLine("TestCommand ontvangen:");
             return evt.i * evt.i;
         }
@@ -37,7 +38,7 @@ namespace VoorbeeldMicroservice
         [Command("Testje2")]
         public int CommandListner2(TestCommand evt)
         {
-            Thread.Sleep(5000);
+            //Thread.Sleep(5000);
             Console.WriteLine("TestCommand ontvangen:");
             return evt.i * evt.i * evt.i;
         }

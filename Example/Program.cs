@@ -5,6 +5,9 @@ using Minor.Nijn.RabbitMQBus;
 using Minor.Nijn.WebScale;
 using System;
 using System.Threading.Tasks;
+using Minor.Nijn;
+using Minor.Nijn.TestBus;
+using RabbitMQ.Client;
 
 namespace VoorbeeldMicroservice
 {
@@ -24,7 +27,7 @@ namespace VoorbeeldMicroservice
                     .WithCredentials(userName: "guest", password: "guest");
 
 
-            using (var context = connectionBuilder.CreateContext())
+            using (var context = new TestBusContext())
             {
                 var builder = new MicroserviceHostBuilder()
                     .SetLoggerFactory(loggerFactory)
@@ -52,13 +55,13 @@ namespace VoorbeeldMicroservice
             }
         }
 
-        private static async Task Test(RabbitMQBusContext context)
+        private static async Task Test(IBusContext<IConnection> context)
         {
             CommandPublisher commandPublisher = new CommandPublisher(context, "Testje");
             var testcommand = new TestCommand() { i = 100 };
-
+            
             var result = await commandPublisher.Publish<int>(testcommand);
-            Console.WriteLine("result:" + result.ToString());
+            Console.WriteLine("result: " + result);
         }
     }
 }

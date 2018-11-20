@@ -20,11 +20,6 @@ namespace Minor.Nijn.RabbitMQBus
         private readonly ILogger _logger;
         private bool _disposed = false;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="responseQueueName">if responseQueueName null is given then rabbitMQ will generate a name</param>
         public RabbitMQCommandSender(RabbitMQBusContext context)
         {
             Channel = context.Connection.CreateModel();
