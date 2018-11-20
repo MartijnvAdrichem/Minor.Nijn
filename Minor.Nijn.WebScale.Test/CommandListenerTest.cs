@@ -99,7 +99,7 @@ namespace Minor.Nijn.WebScale.Test
 
             TestCommand command = new TestCommand() {Message = "message"};
 
-            var message = new CommandMessage(JsonConvert.SerializeObject(command), typeof(TestCommand).FullName, null);
+            var message = new CommandRequestMessage(JsonConvert.SerializeObject(command), null);
 
             var result = target.Handle(message);
 

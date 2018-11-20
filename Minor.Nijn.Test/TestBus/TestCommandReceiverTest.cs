@@ -46,10 +46,10 @@ namespace Minor.Nijn.Test.TestBus
             target.StartReceivingCommands((cm) =>
             {
                 autoReset.Set();
-                return cm;
+                return new CommandResponseMessage(cm.Message, "", cm.CorrelationId);
             });
 
-            context.CommandQueues["queue"].Enqueue(new TestBusCommandMessage(new CommandMessage("message", null, null), new BasicProperties() {ReplyTo = "responseQueue"} ));
+            context.CommandQueues["queue"].Enqueue(new TestBusCommandMessage(new CommandRequestMessage("message", null), new BasicProperties() {ReplyTo = "responseQueue"} ));
 
             bool succes = autoReset.WaitOne(5000);
             Assert.IsTrue(succes);
@@ -66,8 +66,8 @@ namespace Minor.Nijn.Test.TestBus
             TestBusContext context = new TestBusContext();
             var receiver = context.CreateCommandReceiver("queue");
             receiver.DeclareCommandQueue();
-            receiver.StartReceivingCommands((cm) => { return cm;});
-           Assert.ThrowsException<BusConfigurationException>(() => receiver.StartReceivingCommands((cm) => { return cm;}));
+            receiver.StartReceivingCommands((cm) => { return new CommandResponseMessage(cm.Message, "", null);});
+           Assert.ThrowsException<BusConfigurationException>(() => receiver.StartReceivingCommands((cm) => { return new CommandResponseMessage(cm.Message, "" ,cm.CorrelationId); }));
         }
         [TestMethod]
         public void DeclaringQueueTwiceThrowsException()
@@ -89,10 +89,10 @@ namespace Minor.Nijn.Test.TestBus
            receiver.StartReceivingCommands((cm) =>
            {
                var message = "message2";
-               return new CommandMessage(message, cm.MessageType, cm.CorrelationId);
+               return new CommandResponseMessage(message, typeof(string).FullName, cm.CorrelationId);
            });
             
-            var mess = new CommandMessage("message", null, null);
+            var mess = new CommandRequestMessage("message", null);
             var result = await sender.SendCommandAsync(mess, "queue");
 
             Assert.AreEqual("message2", result.Message);

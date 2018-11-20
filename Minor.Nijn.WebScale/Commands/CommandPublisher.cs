@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Reflection.PortableExecutable;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Minor.Nijn.RabbitMQBus;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
@@ -11,40 +10,54 @@ namespace Minor.Nijn.WebScale
 {
     public class CommandPublisher : ICommandPublisher
     {
-        public String QueueName { get; set; }
+        private readonly ILogger _logger;
 
-        private ICommandSender Sender { get; }
         public CommandPublisher(IBusContext<IConnection> context, string queueName)
         {
             QueueName = queueName;
             Sender = context.CreateCommandSender();
+            _logger = NijnLogger.CreateLogger<CommandPublisher>();
         }
 
-        public async Task<object> Publish(DomainCommand domainCommand)
+        private ICommandSender Sender { get; }
+        public string QueueName { get; set; }
+
+        public async Task<T> Publish<T>(DomainCommand domainCommand)
         {
+            domainCommand.TimeStamp = DateTime.Now.Ticks;
             var body = JsonConvert.SerializeObject(domainCommand);
-            CommandMessage commandMessage = new CommandMessage(body, domainCommand.ConvertResponseToType == null ? "" : domainCommand.ConvertResponseToType.ToString() ,domainCommand.CorrelationId);
+            var commandMessage = new CommandRequestMessage(body, domainCommand.CorrelationId);
+            var task = Sender.SendCommandAsync(commandMessage, QueueName);
 
-            var result = await Sender.SendCommandAsync(commandMessage, QueueName);
-
-            if (result.MessageType.Contains("Exception"))
+            if (await Task.WhenAny(task, Task.Delay(5000)) == task)
             {
-                object e = null;
-                try
+                // Task completed within timeout.
+                // Consider that the task may have faulted or been canceled.
+                // We re-await the task so that any exceptions/cancellation is rethrown.
+                var result = await task;
+
+                if (result.MessageType.Contains("Exception"))
                 {
-                     e  = Activator.CreateInstance(Type.GetType(result.MessageType), result.Message);
+                    object e = null;
+                    try
+                    {
+                        e = Activator.CreateInstance(Type.GetType(result.MessageType), result.Message);
+                    }
+                    catch (Exception)
+                    {
+                        throw new InvalidCastException(
+                            $"an unknown exception occured (message {result.Message}), exception type was {result.MessageType}");
+                    }
+
+                    throw e as Exception;
                 }
-                catch(Exception)
-                {
-                    throw new Exception($"an unknown exception occured (message {result.Message}), exception type was {result.MessageType}");
-                }
-                throw e as Exception;
+
+                var obj = JsonConvert.DeserializeObject<T>(result.Message);
+                return obj;
             }
-            object obj = JsonConvert.DeserializeObject(result.Message, Type.GetType(result.MessageType));
-            return obj;
 
-
-
+            _logger.LogWarning("MessageID {cor} did not receive a response", domainCommand.CorrelationId);
+            throw new NoResponseException("Could not get a response");
         }
 
         public void Dispose()

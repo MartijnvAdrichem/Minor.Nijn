@@ -15,8 +15,8 @@ namespace Minor.Nijn.TestBus
         private readonly TestBusContext _context;
         private readonly string _replyQueueName;
 
-        public readonly ConcurrentDictionary<string, TaskCompletionSource<CommandMessage>> CallbackMapper =
-            new ConcurrentDictionary<string, TaskCompletionSource<CommandMessage>>();
+        public readonly ConcurrentDictionary<string, TaskCompletionSource<CommandResponseMessage>> CallbackMapper =
+            new ConcurrentDictionary<string, TaskCompletionSource<CommandResponseMessage>>();
 
         public TestCommandSender(TestBusContext context)
         {
@@ -38,29 +38,33 @@ namespace Minor.Nijn.TestBus
 
                     var response = queue.Dequeue();
 
-                    if (!CallbackMapper.TryRemove(response.Props.CorrelationId, out TaskCompletionSource<CommandMessage> tcs))
+                    if (!CallbackMapper.TryRemove(response.Props.CorrelationId, out TaskCompletionSource<CommandResponseMessage> tcs))
                         return;
-                    var commandResponse = response.Message;
-                    tcs.TrySetResult(commandResponse);
+                    var commandResponse = response.Message;;
+                    tcs.TrySetResult(commandResponse as CommandResponseMessage);
 
                 }
             }).Start();
 
         }
-        public Task<CommandMessage> SendCommandAsync(CommandMessage request, string queueName)
+        public Task<CommandResponseMessage> SendCommandAsync(CommandRequestMessage request, string queueName)
         {
             BasicProperties props = new BasicProperties();
             var correlationId = Guid.NewGuid().ToString();
             props.CorrelationId = correlationId;
-            props.Type = request.MessageType == null ? "" : request.MessageType;
             props.ReplyTo = _replyQueueName;
 
-            var tcs = new TaskCompletionSource<CommandMessage>();
+            var tcs = new TaskCompletionSource<CommandResponseMessage>();
             CallbackMapper.TryAdd(correlationId, tcs);
 
             _context.CommandQueues[queueName].Enqueue(new TestBusCommandMessage(request, props));
 
             return tcs.Task;
+        }
+
+        public void CancelCommand(string correlationId)
+        {
+            throw new NotImplementedException();
         }
 
         public void Dispose()

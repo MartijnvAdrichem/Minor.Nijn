@@ -9,39 +9,41 @@ namespace Minor.Nijn.RabbitMQBus.Test
     [TestClass]
     public class RabbitMQMessageReceiver_Test
     {
-        //[TestMethod]
-        //public void RecieveMessagesCalledCorrectly()
-        //{
-        //    // Arrange
-        //    var channelMock = new Mock<IModel>(MockBehavior.Strict);
-        //    channelMock.Setup(c => c.QueueBind("TestQueue1", "Testxchange1", "", null))
-        //        .Verifiable();
+        [TestMethod]
+        public void RecieveMessagesCalledCorrectly()
+        {
+            // Arrange
+            var queueName = "TestQueue1";
+            var exchangeName = "Testxchange1";
 
-        //    var consumer = new EventingBasicConsumer(channelMock.Object);
-        //    //string queue, bool autoAck, string consumerTag, bool noLocal, bool exclusive, IDictionary< string, object> arguments, IBasicConsumer consumer
-        //    channelMock.Setup(c => c.BasicConsume("TestQueue1", true, "", false, false, null, consumer));
+            var channelMock = new Mock<IModel>(MockBehavior.Strict);
+            channelMock.Setup(c => c.QueueBind(queueName, exchangeName, "", null))
+                .Verifiable();
 
-        //    channelMock.Setup(c => c.ExchangeDeclare("Testxchange1", "topic", false, false, null))
-        //        .Verifiable();
+            channelMock.Setup(c => c.QueueDeclare(queueName, true, false, false, null)).Returns(new QueueDeclareOk("", 0, 0))
+                .Verifiable();
 
-        //    var connectionMock = new Mock<IConnection>(MockBehavior.Strict);
-        //    connectionMock.Setup(r => r.CreateModel())
-        //        .Returns(channelMock.Object)
-        //        .Verifiable();
+            channelMock.Setup(m => m.BasicConsume(queueName, true, "", false, false, null, It.IsAny<EventingBasicConsumer>())).Returns(queueName);
 
-        //    var context = new RabbitMQBusContext(connectionMock.Object, "Testxchange1");
 
-        //    var target = new RabbitMQMessageReceiver(context, "TestQueue1", null);
+            var connectionMock = new Mock<IConnection>(MockBehavior.Strict);
+            connectionMock.Setup(r => r.CreateModel())
+                .Returns(channelMock.Object)
+                .Verifiable();
 
-        //    // Act
-        //    target.DeclareQueue();
-        //    target.StartReceivingMessages(message =>
-        //    {
+            var context = new RabbitMQBusContext(connectionMock.Object, exchangeName);
 
-        //    });
+            var target = new RabbitMQMessageReceiver(context, queueName, null);
 
-        //    // Assert
-        //    channelMock.VerifyAll();
-        //}
+            // Act
+            target.DeclareQueue();
+            target.StartReceivingMessages(message =>
+            {
+
+            });
+
+            // Assert
+            channelMock.VerifyAll();
+        }
     }
 }

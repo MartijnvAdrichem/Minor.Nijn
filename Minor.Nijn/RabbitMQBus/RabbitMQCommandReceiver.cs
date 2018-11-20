@@ -25,7 +25,7 @@ namespace Minor.Nijn.RabbitMQBus
         public void DeclareCommandQueue()
         {
             _log.LogInformation("Declared a queue {0} for commands", QueueName);
-            channel.QueueDeclare(queue: QueueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
+            channel.QueueDeclare(queue: QueueName, durable: false, exclusive: false, autoDelete: true, arguments: null);
             channel.BasicQos(0, 1, false);
          
         }
@@ -42,19 +42,18 @@ namespace Minor.Nijn.RabbitMQBus
                 var props = ea.BasicProperties;
                 var replyProps = channel.CreateBasicProperties();
                 replyProps.CorrelationId = props.CorrelationId;
-                replyProps.Type = props.Type;
                 
                 var message = Encoding.UTF8.GetString(body);
-                CommandMessage response = null; 
+                CommandResponseMessage response = null; 
                 try
                 {
-                    response = callback(new CommandMessage(message, props.Type, props.CorrelationId));
+                    response = callback(new CommandRequestMessage(message, props.CorrelationId));
                     replyProps.Type = response.MessageType.ToString();
                 }
                 catch (Exception e)
                 {
                     var realException = e.InnerException;
-                    response = new CommandMessage(realException.Message, realException.GetType().ToString(), props.CorrelationId);
+                    response = new CommandResponseMessage(realException.Message, realException.GetType().ToString(), props.CorrelationId);
                     replyProps.Type = realException.GetType().ToString();
                 }
                 finally

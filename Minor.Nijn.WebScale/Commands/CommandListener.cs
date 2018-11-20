@@ -36,14 +36,14 @@ namespace Minor.Nijn.WebScale
             _receiver.StartReceivingCommands(Handle);
         }
 
-        public CommandMessage Handle(CommandMessage commandMessage)
+        public CommandResponseMessage Handle(CommandRequestMessage commandMessage)
         {
             var instance = Host.CreateInstanceOfType(_methodCommandInfo.ClassType);
 
             var param = JsonConvert.DeserializeObject(commandMessage.Message, _methodCommandInfo.MethodParameter.ParameterType);
             object result = _methodCommandInfo.MethodInfo.Invoke(instance, new[] {param});
             var resultJson = JsonConvert.SerializeObject(result);
-            return new CommandMessage(resultJson, _methodCommandInfo.MethodReturnType.ToString(), commandMessage.CorrelationId);
+            return new CommandResponseMessage(resultJson, _methodCommandInfo.MethodReturnType.ToString(), commandMessage.CorrelationId);
        }
 
         public void Dispose()

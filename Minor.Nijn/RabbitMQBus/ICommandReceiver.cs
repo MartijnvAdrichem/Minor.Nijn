@@ -12,6 +12,6 @@ namespace Minor.Nijn.RabbitMQBus
         void StartReceivingCommands(CommandReceivedCallback callback);
     }
 
-    public delegate CommandMessage CommandReceivedCallback(CommandMessage commandMessage);
+    public delegate CommandResponseMessage CommandReceivedCallback(CommandRequestMessage commandMessage);
 
 }

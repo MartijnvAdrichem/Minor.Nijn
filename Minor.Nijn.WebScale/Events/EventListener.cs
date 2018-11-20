@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.Extensions.DependencyInjection;
+using Minor.Nijn.WebScale.Attributes;
 
 namespace Minor.Nijn.WebScale
 {

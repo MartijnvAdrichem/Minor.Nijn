@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Minor.Nijn.RabbitMQBus;
 
-namespace Minor.Nijn.WebScale
+namespace Minor.Nijn.WebScale.Attributes
 {
     [AttributeUsage(AttributeTargets.Method)]
     public class CommandAttribute : Attribute

@@ -8,7 +8,7 @@ namespace Minor.Nijn.WebScale
         string QueueName { get; }
 
         void DeclareQueue(IBusContext<IConnection> context);
-        CommandMessage Handle(CommandMessage commandMessage);
+        CommandResponseMessage Handle(CommandRequestMessage commandMessage);
         void StartListening(IMicroserviceHost host);
     }
 }

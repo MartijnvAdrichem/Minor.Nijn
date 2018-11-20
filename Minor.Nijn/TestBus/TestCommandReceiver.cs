@@ -52,16 +52,19 @@ namespace Minor.Nijn.TestBus
                         continue;
                     }
 
-                    CommandMessage response = null;
+                    CommandResponseMessage response = null;
                     var command = queue.Dequeue();
+                    string type = command.Props.Type;
 
                     try
                     {
-                        response = callback.Invoke(command.Message);
+                        response = callback.Invoke(command.Message as CommandRequestMessage);
                     }
                     catch (Exception e)
                     {
-                        response = new CommandMessage(e.Message, command.Props.Type, command.Props.CorrelationId);
+                        var realException = e.InnerException;
+                        response = new CommandResponseMessage(realException.Message, realException.GetType().ToString(), command.Props.CorrelationId);
+                        type = realException.GetType().FullName;
                     }
                     finally
                     {
@@ -69,7 +72,7 @@ namespace Minor.Nijn.TestBus
                             new BasicProperties()
                             {
                                 CorrelationId =  command.Props.CorrelationId,
-                                Type = command.Props.Type
+                                Type = type
                             }));
                     }
 

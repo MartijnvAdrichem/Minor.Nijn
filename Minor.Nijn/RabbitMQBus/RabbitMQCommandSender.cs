@@ -16,8 +16,8 @@ namespace Minor.Nijn.RabbitMQBus
         private readonly IModel _channel;
         private readonly string _replyQueueName;
         private readonly EventingBasicConsumer _consumer;
-        private readonly ConcurrentDictionary<string, TaskCompletionSource<CommandMessage>> _callbackMapper =
-                    new ConcurrentDictionary<string, TaskCompletionSource<CommandMessage>>();
+        private readonly ConcurrentDictionary<string, TaskCompletionSource<CommandResponseMessage>> _callbackMapper =
+                    new ConcurrentDictionary<string, TaskCompletionSource<CommandResponseMessage>>();
 
         private readonly ILogger _logger;
 
@@ -29,18 +29,18 @@ namespace Minor.Nijn.RabbitMQBus
         public RabbitMQCommandSender(RabbitMQBusContext context)
         {
             _channel = context.Connection.CreateModel();
-            _replyQueueName = _channel.QueueDeclare().QueueName;
+            _replyQueueName = _channel.QueueDeclare("", false, false, true).QueueName;
             _logger = NijnLogger.CreateLogger<RabbitMQCommandSender>();
             
             _consumer = new EventingBasicConsumer(_channel);
             _consumer.Received += (model, ea) =>
             {
-                if (!_callbackMapper.TryRemove(ea.BasicProperties.CorrelationId, out TaskCompletionSource<CommandMessage> tcs))
+                if (!_callbackMapper.TryRemove(ea.BasicProperties.CorrelationId, out TaskCompletionSource<CommandResponseMessage> tcs))
                     return;
                 var body = ea.Body;
                 var message = Encoding.UTF8.GetString(body);
 
-                var commandResponse = new CommandMessage(message, ea.BasicProperties.Type, ea.BasicProperties.CorrelationId);
+                var commandResponse = new CommandResponseMessage(message, ea.BasicProperties.Type, ea.BasicProperties.CorrelationId);
                 tcs.TrySetResult(commandResponse);
             };
 
@@ -48,7 +48,7 @@ namespace Minor.Nijn.RabbitMQBus
         }
 
        
-        public Task<CommandMessage> SendCommandAsync(CommandMessage request, string queueName)
+        public Task<CommandResponseMessage> SendCommandAsync(CommandRequestMessage request, string queueName)
         {
             if (queueName == _replyQueueName)
             {
@@ -57,16 +57,15 @@ namespace Minor.Nijn.RabbitMQBus
             }
 
             IBasicProperties props = _channel.CreateBasicProperties();
-            var correlationId = Guid.NewGuid().ToString();
-            props.CorrelationId = correlationId;
-            props.Type = request.MessageType == null ? "" : request.MessageType;
+            props.CorrelationId = Guid.NewGuid().ToString();
             props.ReplyTo = _replyQueueName;
+            props.Timestamp = new RabbitMQ.Client.AmqpTimestamp(DateTime.Now.Ticks);
             var messageBytes = request.EncodeMessage();
 
-            var tcs = new TaskCompletionSource<CommandMessage>();
-            _callbackMapper.TryAdd(correlationId, tcs);
+            var tcs = new TaskCompletionSource<CommandResponseMessage>();
+            _callbackMapper.TryAdd(props.CorrelationId, tcs);
 
-            _logger.LogTrace("Sending command message with correlation id {id} and body {body} ", correlationId, request);
+            _logger.LogTrace("Sending command message with correlation id {id} and body {body} ", props.CorrelationId, request);
 
             _channel.BasicPublish(
                 exchange: "",
@@ -79,7 +78,7 @@ namespace Minor.Nijn.RabbitMQBus
                 queue: _replyQueueName,
                 autoAck: true);
 
-             return tcs.Task;
+            return tcs.Task;
         }
 
         public void Dispose()

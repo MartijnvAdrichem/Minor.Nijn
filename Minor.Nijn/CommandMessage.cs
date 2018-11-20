@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Minor.Nijn.RabbitMQBus;
 
 namespace Minor.Nijn
 {
-    public class CommandMessage
+    public class CommandRequestMessage : ICommandMessage
     {
         public string Message { get; }
-        public string MessageType { get; }
         public string CorrelationId { get; }
 
         public byte[] EncodeMessage()
@@ -17,10 +17,9 @@ namespace Minor.Nijn
 
 
 
-        public CommandMessage(string message, string messageType, string correlationId)
+        public CommandRequestMessage(string message, string correlationId)
         {
             Message = message;
-            MessageType = messageType;
             CorrelationId = correlationId;
         }
     }

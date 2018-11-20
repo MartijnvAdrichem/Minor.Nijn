@@ -7,11 +7,12 @@ using Minor.Nijn.RabbitMQBus;
 
 namespace Minor.Nijn.RabbitMQTest
 {
+    [Ignore]
     [TestClass]
     public class RabbitMqIntegration_Test
     {
         private RabbitMQBusContext _context;
-
+        
         [TestInitialize]
         public void Setup()
         {
@@ -19,7 +20,7 @@ namespace Minor.Nijn.RabbitMQTest
             _context = contextBuilder.WithCredentials("guest", "guest").WithAddress("localhost", 5672).WithExchange("TestExchange1").CreateContext();
         }
 
- 
+        [Ignore]
         [TestMethod]
         public void SendAndReceiveWithTopicsCorrectly()
         {
@@ -48,6 +49,7 @@ namespace Minor.Nijn.RabbitMQTest
             Assert.AreEqual("TestMessage", receivedMessage.Message);
         }
 
+        [Ignore]
         [TestMethod]
         public void ThrowsExceptionWithMultipleQueueDeclare()
         {
@@ -67,6 +69,7 @@ namespace Minor.Nijn.RabbitMQTest
             Assert.AreEqual("Can't declare the queue multiple times", exception.Message);
         }
 
+        [Ignore]
         [TestMethod]
         public void ThrowsExceptionWhenListeningMultipleTimes()
         {
@@ -93,6 +96,7 @@ namespace Minor.Nijn.RabbitMQTest
             Assert.AreEqual("Can't start listening multiple times", exception.Message);
         }
 
+        [Ignore]
         [TestCleanup]
         public void Cleanup()
         {

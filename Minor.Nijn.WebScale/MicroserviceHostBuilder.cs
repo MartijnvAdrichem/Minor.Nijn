@@ -1,52 +1,53 @@
-﻿using RabbitMQ.Client;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using Microsoft.Extensions.DependencyInjection;
-using Minor.Nijn.RabbitMQBus;
 using Microsoft.Extensions.Logging;
+using Minor.Nijn.WebScale.Attributes;
+using RabbitMQ.Client;
 
 namespace Minor.Nijn.WebScale
 {
     /// <summary>
-    /// Creates and Configures a MicroserviceHost
-    /// For example:
+    ///     Creates and Configures a MicroserviceHost
+    ///     For example:
     ///     var builder = new MicroserviceHostBuilder()
-    ///             .SetLoggerFactory(...)
-    ///             .RegisterDependencies((services) =>
-    ///                 {
-    ///                     services.AddTransient<IFoo,Foo>();
-    ///                 })
-    ///             .WithBusOptions(new BusOptions(exchangeName: "MVM.TestExchange"))
-    ///             .UseConventions();
+    ///     .SetLoggerFactory(...)
+    ///     .RegisterDependencies((services) =>
+    ///     {
+    ///     services.AddTransient
+    ///     <IFoo, Foo>
+    ///         ();
+    ///         })
+    ///         .WithBusOptions(new BusOptions(exchangeName: "MVM.TestExchange"))
+    ///         .UseConventions();
     /// </summary>
     public class MicroserviceHostBuilder
     {
+        private static IServiceCollection _services;
+        private List<CommandListener> _commandListeners;
         private IBusContext<IConnection> _context;
         private List<EventListener> _eventListeners;
-        private List<CommandListener> _commandListeners;
-        static IServiceCollection _services;
 
-        private ILogger _log;
+        private readonly ILogger _log;
 
         public MicroserviceHostBuilder()
         {
             _log = NijnLogger.CreateLogger<MicroserviceHostBuilder>();
         }
+
         /// <summary>
-        /// Configures the connection to the message broker
+        ///     Configures the connection to the message broker
         /// </summary>
         public MicroserviceHostBuilder WithContext(IBusContext<IConnection> context)
         {
-
             _context = context;
             return this;
         }
 
         /// <summary>
-        /// Scans the assemblies for EventListeners and adds them to the MicroserviceHost
+        ///     Scans the assemblies for EventListeners and adds them to the MicroserviceHost
         /// </summary>
         public MicroserviceHostBuilder UseConventions()
         {
@@ -56,29 +57,59 @@ namespace Minor.Nijn.WebScale
             foreach (var type in types)
             {
                 var eventListenerAttribute = type.GetCustomAttribute<EventListenerAttribute>();
-                if (eventListenerAttribute == null) continue;
+                var commandListenerAttribute = type.GetCustomAttribute<CommandListenerAttribute>();
 
-                if (_eventListeners == null)
-                {
-                    _eventListeners = new List<EventListener>();
-                }
+                if (eventListenerAttribute == null && commandListenerAttribute == null) continue;
 
-               BuildEventListener(eventListenerAttribute, type);
+                if (_eventListeners == null)_eventListeners = new List<EventListener>();
+                if (_commandListeners == null) _commandListeners = new List<CommandListener>();
 
-                
+                if (eventListenerAttribute != null) BuildEventListener(eventListenerAttribute, type);
 
+                if (commandListenerAttribute != null) BuildCommandListener(type);
             }
+
             return this;
         }
 
+        /// <summary>
+        /// Builds a CommandListener class based on the class type
+        /// </summary>
+        /// <param name="classType"></param>
+        private void BuildCommandListener(Type classType)
+        {
+            var methods = classType.GetMethods();
+
+            foreach (var methodInfo in methods)
+            {
+                var commandAttribute = methodInfo.GetCustomAttribute<CommandAttribute>();
+                if (commandAttribute == null) continue;
+
+                var firstParam = GetParameterInfo(methodInfo);
+                var returnType = methodInfo.ReturnType;
+
+                var methodCommandInfo = new MethodCommandInfo(classType, methodInfo, firstParam, returnType,
+                    commandAttribute.Queuename);
+                var commandListener = new CommandListener(methodCommandInfo);
+
+                _commandListeners.Add(commandListener);
+            }
+        }
+
+        /// <summary>
+        /// Build a EventListener class based on the attribute and the class type
+        /// </summary>
+        /// <param name="eventListenerAttribute"></param>
+        /// <param name="classType"></param>
         private void BuildEventListener(EventListenerAttribute eventListenerAttribute, Type classType)
         {
             var queueExists = _eventListeners.FirstOrDefault(el =>
                 el.EventListenerAttribute.QueueName == eventListenerAttribute.QueueName);
-            
-            if(queueExists == null)
+
+            if (queueExists == null)
             {
-                var eventListener = new EventListener { EventListenerAttribute = eventListenerAttribute, Class = classType };
+                var eventListener = new EventListener
+                    {EventListenerAttribute = eventListenerAttribute, Class = classType};
                 BuildTopics(classType, eventListener);
                 _eventListeners.Add(eventListener);
             }
@@ -88,66 +119,69 @@ namespace Minor.Nijn.WebScale
             }
         }
 
+        /// <summary>
+        /// Builds all methodtopics based on the topics
+        /// </summary>
+        /// <param name="classType"></param>
+        /// <param name="eventListener"></param>
         private void BuildTopics(Type classType, EventListener eventListener)
         {
             var methods = classType.GetMethods();
             if (eventListener.Topics == null)
-            {
                 eventListener.Topics = new Dictionary<TopicAttribute, List<MethodTopicInfo>>();
-            }
 
-            if (_commandListeners == null)
-            {
-                _commandListeners = new List<CommandListener>();
-            }
 
             foreach (var methodInfo in methods)
             {
                 var topicAttributes = methodInfo.GetCustomAttributes<TopicAttribute>().ToList();
-                var commandAttribute = methodInfo.GetCustomAttribute<CommandAttribute>();
+                if (topicAttributes.Count == 0) continue;
 
-                var methodParams = methodInfo.GetParameters();
-                if (methodParams.Length > 1 && (topicAttributes.Count > 0 || commandAttribute != null))
-                {
-                    throw new InvalidOperationException(
-                        "Method " + methodInfo.Name + " has multiple parameters, this is not allowed.");
-                }
-
-                var firstParam = (methodParams.Length == 0) ? null : methodParams[0];
-                var returntype = methodInfo.ReturnType;
+                var firstParam = GetParameterInfo(methodInfo);
                 foreach (var topicAttribute in topicAttributes)
-                {
                     BuildMethodTopic(classType, eventListener, methodInfo, topicAttribute, firstParam);
-                }
-
-                if (commandAttribute != null)
-                {
-                    var methodCommandInfo = new MethodCommandInfo(classType, methodInfo, firstParam, returntype, commandAttribute.Queuename);
-                    CommandListener commandListener = new CommandListener(methodCommandInfo);
-                    _commandListeners.Add(commandListener);
-                }
             }
         }
 
-        private static void BuildMethodTopic(Type classType, EventListener eventListener, MethodInfo methodInfo, TopicAttribute topicAttribute, ParameterInfo firstParam)
+        /// <summary>
+        /// Gets the paremeterInfo from a method
+        /// </summary>
+        /// <param name="methodInfo"></param>
+        /// <returns></returns>
+        private ParameterInfo GetParameterInfo(MethodInfo methodInfo)
         {
-            bool hasDefaultConstructor = classType.GetConstructor(Type.EmptyTypes) != null;
+            var methodParams = methodInfo.GetParameters();
+            if (methodParams.Length > 1)
+                throw new InvalidOperationException(
+                    "Method " + methodInfo.Name + " has multiple parameters, this is not allowed.");
+
+            var firstParam = methodParams.Length == 0 ? null : methodParams[0];
+            return firstParam;
+        }
+
+        /// <summary>
+        /// Builds the methodTopic 
+        /// </summary>
+        /// <param name="classType"></param>
+        /// <param name="eventListener"></param>
+        /// <param name="methodInfo"></param>
+        /// <param name="topicAttribute"></param>
+        /// <param name="firstParam"></param>
+        private void BuildMethodTopic(Type classType, EventListener eventListener, MethodInfo methodInfo,
+            TopicAttribute topicAttribute, ParameterInfo firstParam)
+        {
+            var hasDefaultConstructor = classType.GetConstructor(Type.EmptyTypes) != null;
 
             var methodTopicInfo = new MethodTopicInfo(classType, hasDefaultConstructor,
                 topicAttribute.TopicPattern, methodInfo, firstParam);
 
             if (eventListener.Topics.ContainsKey(topicAttribute))
-            {
                 eventListener.Topics[topicAttribute].Add(methodTopicInfo);
-            }
             else
-            {
-                eventListener.Topics.Add(topicAttribute, new List<MethodTopicInfo>() { methodTopicInfo });
-            }
+                eventListener.Topics.Add(topicAttribute, new List<MethodTopicInfo> {methodTopicInfo});
         }
 
         /// <summary>
-        /// Manually adds EventListeners to the MicroserviceHost
+        ///     Manually adds EventListeners to the MicroserviceHost
         /// </summary>
         public MicroserviceHostBuilder AddEventListener<T>()
         {
@@ -155,10 +189,7 @@ namespace Minor.Nijn.WebScale
             var eventListenerAttribute = type.GetCustomAttribute<EventListenerAttribute>();
             if (eventListenerAttribute == null) return this;
 
-            if (_eventListeners == null)
-            {
-                _eventListeners = new List<EventListener>();
-            }
+            if (_eventListeners == null) _eventListeners = new List<EventListener>();
 
             BuildEventListener(eventListenerAttribute, type);
 
@@ -166,7 +197,7 @@ namespace Minor.Nijn.WebScale
         }
 
         /// <summary>
-        /// Configures logging functionality for the MicroserviceHost
+        ///     Configures logging functionality for the MicroserviceHost
         /// </summary>
         public MicroserviceHostBuilder SetLoggerFactory(ILoggerFactory loggerFactory)
         {
@@ -176,7 +207,7 @@ namespace Minor.Nijn.WebScale
         }
 
         /// <summary>
-        /// Configures Dependency Injection for the MicroserviceHost
+        ///     Configures Dependency Injection for the MicroserviceHost
         /// </summary>
         public MicroserviceHostBuilder RegisterDependencies(Action<IServiceCollection> servicesConfiguration)
         {
@@ -186,12 +217,12 @@ namespace Minor.Nijn.WebScale
         }
 
         /// <summary>
-        /// Creates the MicroserviceHost, based on the configurations
+        ///     Creates the MicroserviceHost, based on the configurations
         /// </summary>
         /// <returns></returns>
         public MicroserviceHost CreateHost()
         {
-            if (_context == null) 
+            if (_context == null)
             {
                 _log.LogError("Context is not correctly configurated");
                 throw new ArgumentNullException();

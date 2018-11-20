@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Minor.Nijn.WebScale
+namespace Minor.Nijn.WebScale.Attributes
 {
     /// <summary>
     /// This attribute should decorate each eventhandling method.
