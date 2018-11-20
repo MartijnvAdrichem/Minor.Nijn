@@ -2,7 +2,6 @@
 {
     public interface IEventMessage
     {
-
         string CorrelationId { get; }
         string EventType { get; }
         string Message { get; }

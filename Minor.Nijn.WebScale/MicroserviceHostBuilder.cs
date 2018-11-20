@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using RabbitMQ.Client;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Minor.Nijn.WebScale.Attributes;
-using RabbitMQ.Client;
 
 namespace Minor.Nijn.WebScale
 {

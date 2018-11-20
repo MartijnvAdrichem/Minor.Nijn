@@ -1,10 +1,9 @@
-﻿using System;
-using System.Threading;
+﻿using Newtonsoft.Json;
+using RabbitMQ.Client;
+using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Minor.Nijn.RabbitMQBus;
-using Newtonsoft.Json;
-using RabbitMQ.Client;
 
 namespace Minor.Nijn.WebScale
 {

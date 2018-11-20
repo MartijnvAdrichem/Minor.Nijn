@@ -1,18 +1,15 @@
-﻿using System;
+﻿using RabbitMQ.Client.Framing;
+using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Minor.Nijn.RabbitMQBus;
-using RabbitMQ.Client;
-using RabbitMQ.Client.Framing;
 
 namespace Minor.Nijn.TestBus
 {
     public class TestCommandSender : ICommandSender
     {
-        private readonly TestBusContext _context;
+        private TestBusContext Context { get; }
         private readonly string _replyQueueName;
 
         public readonly ConcurrentDictionary<string, TaskCompletionSource<CommandResponseMessage>> CallbackMapper =
@@ -20,7 +17,7 @@ namespace Minor.Nijn.TestBus
 
         public TestCommandSender(TestBusContext context)
         {
-            _context = context;
+            Context = context;
             _replyQueueName = GenerateRandomQueueName();
             context.DeclareCommandQueue(_replyQueueName);
 
@@ -57,7 +54,7 @@ namespace Minor.Nijn.TestBus
             var tcs = new TaskCompletionSource<CommandResponseMessage>();
             CallbackMapper.TryAdd(correlationId, tcs);
 
-            _context.CommandQueues[queueName].Enqueue(new TestBusCommandMessage(request, props));
+            Context.CommandQueues[queueName].Enqueue(new TestBusCommandMessage(request, props));
 
             return tcs.Task;
         }
@@ -65,10 +62,6 @@ namespace Minor.Nijn.TestBus
         public void CancelCommand(string correlationId)
         {
             throw new NotImplementedException();
-        }
-
-        public void Dispose()
-        {
         }
 
         public string GenerateRandomQueueName()
@@ -83,6 +76,9 @@ namespace Minor.Nijn.TestBus
             }
 
             return new String(stringChars);
+        }
+        public void Dispose()
+        {
         }
     }
 }

@@ -4133,11 +4133,11 @@
   "project": {
     "version": "2.1.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Marti\\Source\\Repos\\TeamTrein\\Minor.Nijn\\Minor.Nijn\\Minor.Nijn.csproj",
+      "projectUniqueName": "D:\\Github\\Minor.Nijn\\Minor.Nijn\\Minor.Nijn\\Minor.Nijn.csproj",
       "projectName": "Minor.Nijn",
-      "projectPath": "C:\\Users\\Marti\\Source\\Repos\\TeamTrein\\Minor.Nijn\\Minor.Nijn\\Minor.Nijn.csproj",
+      "projectPath": "D:\\Github\\Minor.Nijn\\Minor.Nijn\\Minor.Nijn\\Minor.Nijn.csproj",
       "packagesPath": "C:\\Users\\Marti\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Marti\\Source\\Repos\\TeamTrein\\Minor.Nijn\\Minor.Nijn\\obj\\",
+      "outputPath": "D:\\Github\\Minor.Nijn\\Minor.Nijn\\Minor.Nijn\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"

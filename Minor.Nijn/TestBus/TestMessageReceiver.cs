@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,18 +7,16 @@ namespace Minor.Nijn.TestBus
     public class TestMessageReceiver : IMessageReceiver
     {
         public string QueueName { get; }
-
         public IEnumerable<string> TopicExpressions { get; }
         public TestBusContext Context { get; }
-
         private bool _queueDeclared;
         private bool _startedListening;
 
         public TestMessageReceiver(TestBusContext context, string queueName, IEnumerable<string> topicExpressions)
         {
-            this.Context = context;
-            this.QueueName = queueName;
-            this.TopicExpressions = topicExpressions;
+            Context = context;
+            QueueName = queueName;
+            TopicExpressions = topicExpressions;
         }
 
         public void DeclareQueue()

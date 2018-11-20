@@ -1,7 +1,0 @@
-C:\Users\Marti\Source\Repos\TeamTrein\Minor.Nijn\.vs\Minor.Nijn\lut\0\b\Minor.Nijn.WebScale\Debug\netcoreapp2.1\Minor.Nijn.WebScale.deps.json
-C:\Users\Marti\Source\Repos\TeamTrein\Minor.Nijn\.vs\Minor.Nijn\lut\0\b\Minor.Nijn.WebScale\Debug\netcoreapp2.1\Minor.Nijn.WebScale.dll
-C:\Users\Marti\Source\Repos\TeamTrein\Minor.Nijn\.vs\Minor.Nijn\lut\0\i\Minor.Nijn.WebScale\Debug\netcoreapp2.1\Minor.Nijn.WebScale.csproj.CoreCompileInputs.cache
-C:\Users\Marti\Source\Repos\TeamTrein\Minor.Nijn\.vs\Minor.Nijn\lut\0\i\Minor.Nijn.WebScale\Debug\netcoreapp2.1\Minor.Nijn.WebScale.AssemblyInfoInputs.cache
-C:\Users\Marti\Source\Repos\TeamTrein\Minor.Nijn\.vs\Minor.Nijn\lut\0\i\Minor.Nijn.WebScale\Debug\netcoreapp2.1\Minor.Nijn.WebScale.AssemblyInfo.cs
-C:\Users\Marti\Source\Repos\TeamTrein\Minor.Nijn\.vs\Minor.Nijn\lut\0\i\Minor.Nijn.WebScale\Debug\netcoreapp2.1\Minor.Nijn.WebScale.csproj.CopyComplete
-C:\Users\Marti\Source\Repos\TeamTrein\Minor.Nijn\.vs\Minor.Nijn\lut\0\i\Minor.Nijn.WebScale\Debug\netcoreapp2.1\Minor.Nijn.WebScale.dll

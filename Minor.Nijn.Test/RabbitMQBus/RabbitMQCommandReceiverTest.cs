@@ -71,7 +71,7 @@ namespace Minor.Nijn.Test.RabbitMQBus
 
         private CommandResponseMessage Callback(CommandRequestMessage commandmessage)
         {
-            return new CommandResponseMessage("test", typeof(string), "test");
+            return new CommandResponseMessage("test", typeof(string).FullName, "test");
         }
     }
 

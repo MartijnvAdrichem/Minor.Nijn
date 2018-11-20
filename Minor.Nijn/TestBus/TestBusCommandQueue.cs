@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Minor.Nijn.RabbitMQBus;
-using RabbitMQ.Client.Framing;
+﻿using RabbitMQ.Client.Framing;
 
 namespace Minor.Nijn.TestBus
 {

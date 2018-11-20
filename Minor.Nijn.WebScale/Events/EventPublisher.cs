@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Minor.Nijn.RabbitMQBus;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using RabbitMQ.Client;
+using System;
 
 namespace Minor.Nijn.WebScale
 {

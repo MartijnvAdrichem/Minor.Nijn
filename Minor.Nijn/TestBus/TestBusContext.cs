@@ -1,17 +1,13 @@
-﻿using System;
+﻿using RabbitMQ.Client;
 using System.Collections.Generic;
-using System.Text;
 using Minor.Nijn.RabbitMQBus;
-using RabbitMQ.Client;
 
 namespace Minor.Nijn.TestBus
 {
     public class TestBusContext : IBusContext<IConnection>
     {
         public IConnection Connection { get; }
-
         public string ExchangeName { get; }
-
         public Dictionary<string, TestBusQueue> TestQueues { get; set; }
         public Dictionary<string, Queue<TestBusCommandMessage>> CommandQueues { get; set; }
 
@@ -19,6 +15,11 @@ namespace Minor.Nijn.TestBus
         {
             TestQueues = new Dictionary<string, TestBusQueue>();
             CommandQueues = new Dictionary<string, Queue<TestBusCommandMessage>>();
+        }
+
+        public IMessageSender CreateMessageSender()
+        {
+            return new TestMessageSender(this);
         }
 
         public IMessageReceiver CreateMessageReceiver(string queueName, IEnumerable<string> topicExpressions)
@@ -36,15 +37,6 @@ namespace Minor.Nijn.TestBus
             return new TestCommandReceiver(this, queueName);
         }
 
-        public IMessageSender CreateMessageSender()
-        {
-            return new TestMessageSender(this);
-        }
-
-        public void Dispose()
-        {
-        }
-
         public void DeclareQueue(string queueName, IEnumerable<string> topics)
         {
             if (!TestQueues.ContainsKey(queueName))
@@ -52,7 +44,6 @@ namespace Minor.Nijn.TestBus
                 TestQueues[queueName] = new TestBusQueue(topics);
             }
         }
-
 
         public void DeclareCommandQueue(string queueName)
         {
@@ -62,5 +53,8 @@ namespace Minor.Nijn.TestBus
             }
         }
 
+        public void Dispose()
+        {
+        }
     }
 }

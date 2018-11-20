@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Minor.Nijn.RabbitMQBus;
+﻿using System.Text;
+using Minor.Nijn.TestBus;
 
 namespace Minor.Nijn
 {
@@ -15,12 +13,11 @@ namespace Minor.Nijn
             return Encoding.UTF8.GetBytes(Message);
         }
 
-
-
         public CommandRequestMessage(string message, string correlationId)
         {
             Message = message;
             CorrelationId = correlationId;
         }
+
     }
 }

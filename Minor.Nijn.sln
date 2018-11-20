@@ -7,11 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Minor.Nijn", "Minor.Nijn\Mi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Minor.Nijn.WebScale", "Minor.Nijn.WebScale\Minor.Nijn.WebScale.csproj", "{86F6782F-5106-4DCE-B08D-56774AD96074}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VoorbeeldMicroservice", "VoorbeeldMicroservice\VoorbeeldMicroservice.csproj", "{032091AC-07C6-4F01-B953-CEF43C403549}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Example", "Example\Example.csproj", "{032091AC-07C6-4F01-B953-CEF43C403549}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "files", "files", "{88853DAD-5BCA-407D-B19E-6B43F4B14859}"
 	ProjectSection(SolutionItems) = preProject
-		Nijn Opdracht.md = Nijn Opdracht.md
 		RunRabbit.bat = RunRabbit.bat
 	EndProjectSection
 EndProject

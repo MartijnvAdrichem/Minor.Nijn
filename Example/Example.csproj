@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <ApplicationIcon />
+    <OutputType>Exe</OutputType>
+    <StartupObject />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Minor.Nijn.WebScale\Minor.Nijn.WebScale.csproj" />
+    <ProjectReference Include="..\Minor.Nijn\Minor.Nijn.csproj" />
+  </ItemGroup>
+
+</Project>

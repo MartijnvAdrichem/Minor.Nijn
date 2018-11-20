@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Minor.Nijn.RabbitMQBus;
+using Minor.Nijn.TestBus;
 
 namespace Minor.Nijn
 {
@@ -23,13 +24,6 @@ namespace Minor.Nijn
             Message = message;
             CorrelationId = correlationId;
             MessageType = messageType;
-        }
-
-        public CommandResponseMessage(string message, Type messageType, string correlationId )
-        {
-            Message = message;
-            CorrelationId = correlationId;
-            MessageType = messageType.FullName;
         }
   
     }
