@@ -57,6 +57,7 @@ An example of a class that will be converted into queues:
 
 ```
 [EventListener("DemoQueue")]
+[CommandListener]
   public class SomeEventListener
   {
       private readonly IDataMapper mapper;
@@ -67,7 +68,7 @@ An example of a class that will be converted into queues:
           this.mapper = mapper;
       }
 
-      [Command("SomeCommand")] //Declares a queue and listens to incoming events
+      [Command("SomeCommand")] //Declares a queue and listens to incoming commands
       public int CommandListener(SomeCommand command)
       {
         //
@@ -80,6 +81,44 @@ An example of a class that will be converted into queues:
         //
       }
 ```
+
+To send an event use the following code, make sure to use the right topic name: 
+```
+        public Controller( IBusContext<IConnection> context)
+        {
+            _context = context;
+        }
+
+        var messageSender = new EventPublisher(_context);
+            messageSender.Publish(new InheritOfDomainEvent(topicname, ...));
+```
+
+
+To send an command use the following code, if there is no response in 5 seconds an "NoResponseException" will be thrown
+```
+        SomeCommand command = new SomeCommand();
+        public Controller( IBusContext<IConnection> context)
+        {
+            _context = context;
+        }
+            
+        var publisher = new CommandPublisher(_context, "QueueToSendTo");
+        var result = await publisher.Publish<T>(command);
+```
+
+## Testbus
+
+The Nijn framework also has a testbus environment that will mock rabbitmq. To activate it you need to replace the line var context = connectionBuilder.CreateContext() in your startup with context = new TestBusContext()
+
+The testbus also gives you the opportunity to read out the existing queues (which you can use in your tests). You can do this with the following code
+
+```
+context = new TestBusContext()
+context.TestQueues["queuename"].Queue //returns the actual queue which you can use Count on etc
+context.CommandQueues["queuename"] //returns a command queue
+context.DeclareQueue("queuename", new List<string> {"some.topic"}) //declares a queue that will listen on these topics, you can also use the context.CreateMessageReceiver() method but this will also consume the items in the queue, up to you to decide if you want it or not.
+```
+
 
 
 ##### Note: This framework is made for learning purposes and is in no way perfect.
