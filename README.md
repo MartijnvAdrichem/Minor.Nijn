@@ -1,9 +1,7 @@
 # Minor.Nijn
 A C# wrapper around RabbitMQ
 
-this framework consists of 2 parts (Minor.Nijn and Minor.Nijn.Webscale)
-Minor.Nijn is the basic wrapper around RabbitMQ (event sending/receiving and RPC call sending/receiving).
-It also has a basic test environment used for integration testing.
+This framework consists of 2 parts (Minor.Nijn and Minor.Nijn.Webscale). Minor.Nijn is the basic wrapper around RabbitMQ (event sending/receiving and RPC call sending/receiving). It also has a basic test environment used for integration testing.
 
 Initialize this part of the framework by using the RabbitMQContextBuilder, for example:
 
@@ -14,7 +12,7 @@ Initialize this part of the framework by using the RabbitMQContextBuilder, for e
                     .WithCredentials(userName: "guest", password: "guest");
 ```
 
-You can also use the environment variables (for docker). (note: the names are case sensitive)
+You can also use the environment variables (for docker). Note: the names are case sensitive.
 
 ```
 USERNAME guest
@@ -25,7 +23,7 @@ EXCHANGENAME exchange
 
 ```
 
-The WebScale framework is a wrapper around the Nijn framework. With this framework you can add Topic and Command attributes above your methods. These attributes will be converted into actual queues on the Exchange. You initialize this with the following code
+The web-scale framework is a wrapper around the Nijn framework. With this framework you can add Topic- and Command attributes above your methods. These attributes will be converted into actual queues on the Exchange. You initialize this conversion with the following code:
 
 
 ```
@@ -64,7 +62,7 @@ using (var context = connectionBuilder.CreateContext())
 
 ```
 
-If you are using something like ASP.NET you cannot make use of the Console.ReadKey() method so instead of that use
+If you are using something like ASP.NET you cannot make use of the Console.ReadKey() method, so instead of that use:
 
 
 ```
@@ -145,8 +143,7 @@ To send a command use the following code, if there is no response within 5 secon
 ```
 
 ## Testbus
-
-The Nijn framework also has a testbus environment that will mock rabbitmq. To activate it you need to replace the line var context = connectionBuilder.CreateContext() in your startup with context = new TestBusContext()
+The Nijn framework also has a testbus environment that will mock RabbitMQ. To activate it you need to replace the line var context = connectionBuilder.CreateContext() in your startup with context = new TestBusContext().
 
 The testbus also gives you the opportunity to read out the existing queues (which you can use in your tests). You can do this with the following code
 
@@ -159,4 +156,4 @@ context.DeclareQueue("queuename", new List<string> {"some.topic"}) //declares a 
 
 
 
-##### Note: This framework is made for learning purposes and is in no way perfect.
+##### Note: This framework is made for educational purposes and is in no way perfect.
