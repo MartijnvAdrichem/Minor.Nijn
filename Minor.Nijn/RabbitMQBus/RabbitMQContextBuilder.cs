@@ -44,15 +44,15 @@ namespace Minor.Nijn.RabbitMQBus
 
         public RabbitMQContextBuilder ReadFromEnvironmentVariables()
         {
-            if (TryGetFromEnvironmentVariable("ExchangeName", out var exchangeName))
+            if (TryGetFromEnvironmentVariable("EXCHANGENAME", out var exchangeName))
             {
                 ExchangeName = exchangeName;
             }
-            if (TryGetFromEnvironmentVariable("HostName", out var hostName))
+            if (TryGetFromEnvironmentVariable("HOSTNAME", out var hostName))
             {
                 HostName = hostName;
             }
-            if (TryGetFromEnvironmentVariable("Port", out var portString))
+            if (TryGetFromEnvironmentVariable("PORT", out var portString))
             {
                 try
                 {
@@ -63,11 +63,11 @@ namespace Minor.Nijn.RabbitMQBus
                     throw new InvalidCastException("Could not convert PORT environment variable to a number");
                 }
             }
-            if (TryGetFromEnvironmentVariable("UserName", out var userName))
+            if (TryGetFromEnvironmentVariable("USERNAME", out var userName))
             {
                 UserName = userName;
             }
-            if (TryGetFromEnvironmentVariable("Password", out var password))
+            if (TryGetFromEnvironmentVariable("PASSWORD", out var password))
             {
                 _password = password;
             }

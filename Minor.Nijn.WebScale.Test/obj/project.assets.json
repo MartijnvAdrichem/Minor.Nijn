@@ -3252,10 +3252,11 @@
       ]
     },
     "Microsoft.Win32.Registry/4.0.0": {
-      "sha512": "q+eLtROUAQ3OxYA5mpQrgyFgzLQxIyrfT2eLpYX5IEPlHmIio2nh4F5bgOaQoGOV865kFKZZso9Oq9RlazvXtg==",
+      "sha512": "mYUxH/YY9PwvuWY93/qsovFHAh+Lu2CNxNHWxB/x0dnpaEy6oIy/9d7R2J6dFaLZ7jhE7emLjn7A8kSzsP1A+Q==",
       "type": "package",
       "path": "microsoft.win32.registry/4.0.0",
       "files": [
+        ".signature.p7s",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/net46/Microsoft.Win32.Registry.dll",
@@ -4002,10 +4003,11 @@
       ]
     },
     "System.Collections.Immutable/1.2.0": {
-      "sha512": "Cma8cBW6di16ZLibL8LYQ+cLjGzoKxpOTu/faZfDcx94ZjAGq6Nv5RO7+T1YZXqEXTZP9rt1wLVEONVpURtUqw==",
+      "sha512": "2KnDB5xOmdERBZDniirmMPmY4AIUM7AbAIn+faLNShDc3mk0pe8iiPzBuJc5vMhTmMwEZbV2QbRAcaY+y2zwkw==",
       "type": "package",
       "path": "system.collections.immutable/1.2.0",
       "files": [
+        ".signature.p7s",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/netstandard1.0/System.Collections.Immutable.dll",
@@ -4406,10 +4408,11 @@
       ]
     },
     "System.Diagnostics.Process/4.1.0": {
-      "sha512": "mpVZ5bnlSs3tTeJ6jYyDJEIa6tavhAd88lxq1zbYhkkCu0Pno2+gHXcvZcoygq2d8JxW3gojXqNJMTAshduqZA==",
+      "sha512": "4dlFhzwmI3hl32P+8c9hnytYtV7Xldhsokm5i7Fvv5PmTS68TQCfsuJrREIyF9N1B8zlsSomp7AVrXLe45kKFQ==",
       "type": "package",
       "path": "system.diagnostics.process/4.1.0",
       "files": [
+        ".signature.p7s",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -5750,10 +5753,11 @@
       ]
     },
     "System.Reflection.Metadata/1.3.0": {
-      "sha512": "jMSCxA4LSyKBGRDm/WtfkO03FkcgRzHxwvQRib1bm2GZ8ifKM1MX1al6breGCEQK280mdl9uQS7JNPXRYk90jw==",
+      "sha512": "qCIx1jFdXi4k2l0JYCy0ukWKmeZZmZvu62sDe3pu4o2KoIc2Q3Pf7jOi92wh4hpAhYVisXcEDJkOASuMaDeSLw==",
       "type": "package",
       "path": "system.reflection.metadata/1.3.0",
       "files": [
+        ".signature.p7s",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/netstandard1.1/System.Reflection.Metadata.dll",
@@ -6279,10 +6283,11 @@
       ]
     },
     "System.Runtime.Loader/4.0.0": {
-      "sha512": "4UN78GOVU/mbDFcXkEWtetJT/sJ0yic2gGk1HSlSpWI0TDf421xnrZTDZnwNBapk1GQeYN7U1lTj/aQB1by6ow==",
+      "sha512": "/ol/Y9N+MghH5YPeeFuad34s2mclOPJJ4fs2hnFHr04QfGpUSBlcbpp/P3fggCNrZXwVKQEKgHu7SnA43Y8ang==",
       "type": "package",
       "path": "system.runtime.loader/4.0.0",
       "files": [
+        ".signature.p7s",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/net462/_._",
@@ -7329,10 +7334,11 @@
       ]
     },
     "System.ValueTuple/4.4.0": {
-      "sha512": "BahUww/+mdP4ARCAh2RQhQTg13wYLVrBb9SYVgW8ZlrwjraGCXHGjo0oIiUfZ34LUZkMMR+RAzR7dEY4S1HeQQ==",
+      "sha512": "6FvjECwwsvwtdnm2uD91MlFEgId6C2SWsdZk23gFpynHQ9x5ruqjsfEadb0VNzpkEHDQ6cq31CXUv3ouT09EHA==",
       "type": "package",
       "path": "system.valuetuple/4.4.0",
       "files": [
+        ".signature.p7s",
         "LICENSE.TXT",
         "THIRD-PARTY-NOTICES.TXT",
         "lib/MonoAndroid10/_._",
@@ -7548,10 +7554,11 @@
       ]
     },
     "System.Xml.XPath/4.0.1": {
-      "sha512": "UWd1H+1IJ9Wlq5nognZ/XJdyj8qPE4XufBUkAW59ijsCPjZkZe0MUzKKJFBr+ZWBe5Wq1u1d5f2CYgE93uH7DA==",
+      "sha512": "ZSggpSPfkWVcxAqXitdespw9f8KdNq2gJX9+BsGHjx0VaOEPgpcsd+03BgSxrymMWIIC08jREfiOp7UE9v2wWA==",
       "type": "package",
       "path": "system.xml.xpath/4.0.1",
       "files": [
+        ".signature.p7s",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -7585,10 +7592,11 @@
       ]
     },
     "System.Xml.XPath.XmlDocument/4.0.1": {
-      "sha512": "Zm2BdeanuncYs3NhCj4c9e1x3EXFzFBVv2wPEc/Dj4ZbI9R8ecLSR5frAsx4zJCPBtKQreQ7Q/KxJEohJZbfzA==",
+      "sha512": "gQQaCNO5FYxD37SNQvE+yZUNfCt/Y+FgCnead3hu37RsUiwy2cxqRDWPv+Ee+6DlOeV47xaSYYZ6GQW4EhoEXQ==",
       "type": "package",
       "path": "system.xml.xpath.xmldocument/4.0.1",
       "files": [
+        ".signature.p7s",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -7642,23 +7650,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Marti\\.nuget\\packages\\": {},
+    "C:\\Users\\MartijnvA\\.nuget\\packages\\": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Github\\Minor.Nijn\\Minor.Nijn\\Minor.Nijn.WebScale.Test\\Minor.Nijn.WebScale.Test.csproj",
+      "projectUniqueName": "C:\\TFS\\martijna\\Nijn\\Minor.Nijn\\Minor.Nijn.WebScale.Test\\Minor.Nijn.WebScale.Test.csproj",
       "projectName": "Minor.Nijn.WebScale.Test",
-      "projectPath": "D:\\Github\\Minor.Nijn\\Minor.Nijn\\Minor.Nijn.WebScale.Test\\Minor.Nijn.WebScale.Test.csproj",
-      "packagesPath": "C:\\Users\\Marti\\.nuget\\packages\\",
-      "outputPath": "D:\\Github\\Minor.Nijn\\Minor.Nijn\\Minor.Nijn.WebScale.Test\\obj\\",
+      "projectPath": "C:\\TFS\\martijna\\Nijn\\Minor.Nijn\\Minor.Nijn.WebScale.Test\\Minor.Nijn.WebScale.Test.csproj",
+      "packagesPath": "C:\\Users\\MartijnvA\\.nuget\\packages\\",
+      "outputPath": "C:\\TFS\\martijna\\Nijn\\Minor.Nijn\\Minor.Nijn.WebScale.Test\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\Marti\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\MartijnvA\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -7671,8 +7679,8 @@
       "frameworks": {
         "netcoreapp2.1": {
           "projectReferences": {
-            "D:\\Github\\Minor.Nijn\\Minor.Nijn\\Minor.Nijn.WebScale\\Minor.Nijn.WebScale.csproj": {
-              "projectPath": "D:\\Github\\Minor.Nijn\\Minor.Nijn\\Minor.Nijn.WebScale\\Minor.Nijn.WebScale.csproj"
+            "C:\\TFS\\martijna\\Nijn\\Minor.Nijn\\Minor.Nijn.WebScale\\Minor.Nijn.WebScale.csproj": {
+              "projectPath": "C:\\TFS\\martijna\\Nijn\\Minor.Nijn\\Minor.Nijn.WebScale\\Minor.Nijn.WebScale.csproj"
             }
           }
         }

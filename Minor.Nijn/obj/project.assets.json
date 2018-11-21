@@ -1720,10 +1720,11 @@
       ]
     },
     "System.Buffers/4.4.0": {
-      "sha512": "AwarXzzoDwX6BgrhjoJsk6tUezZEozOT5Y9QKF94Gl4JK91I4PIIBkBco9068Y9/Dra8Dkbie99kXB8+1BaYKw==",
+      "sha512": "VCJfpWcYG1gT3WwivZWgT0KaqY678MQBvrOI2si6V8GHeQOtuW+wpiv5ss4KyfGG+cFFdPNaI+nw2/kExCtGgQ==",
       "type": "package",
       "path": "system.buffers/4.4.0",
       "files": [
+        ".signature.p7s",
         "LICENSE.TXT",
         "THIRD-PARTY-NOTICES.TXT",
         "lib/netcoreapp2.0/_._",
@@ -2645,10 +2646,11 @@
       ]
     },
     "System.Numerics.Vectors/4.4.0": {
-      "sha512": "UiLzLW+Lw6HLed1Hcg+8jSRttrbuXv7DANVj0DkL9g6EnnzbL75EB7EWsw5uRbhxd/4YdG8li5XizGWepmG3PQ==",
+      "sha512": "ZhdgJiihSOGD325jClouHy8WSPtwFSj6K1OymoEyN0Wc9Y6X2OVxn65VKfTWHQOYM+QljlVSreporVNvZm8rEA==",
       "type": "package",
       "path": "system.numerics.vectors/4.4.0",
       "files": [
+        ".signature.p7s",
         "LICENSE.TXT",
         "THIRD-PARTY-NOTICES.TXT",
         "lib/MonoAndroid10/_._",
@@ -4127,23 +4129,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Marti\\.nuget\\packages\\": {},
+    "C:\\Users\\MartijnvA\\.nuget\\packages\\": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "2.1.0",
     "restore": {
-      "projectUniqueName": "D:\\Github\\Minor.Nijn\\Minor.Nijn\\Minor.Nijn\\Minor.Nijn.csproj",
+      "projectUniqueName": "C:\\TFS\\martijna\\Nijn\\Minor.Nijn\\Minor.Nijn\\Minor.Nijn.csproj",
       "projectName": "Minor.Nijn",
-      "projectPath": "D:\\Github\\Minor.Nijn\\Minor.Nijn\\Minor.Nijn\\Minor.Nijn.csproj",
-      "packagesPath": "C:\\Users\\Marti\\.nuget\\packages\\",
-      "outputPath": "D:\\Github\\Minor.Nijn\\Minor.Nijn\\Minor.Nijn\\obj\\",
+      "projectPath": "C:\\TFS\\martijna\\Nijn\\Minor.Nijn\\Minor.Nijn\\Minor.Nijn.csproj",
+      "packagesPath": "C:\\Users\\MartijnvA\\.nuget\\packages\\",
+      "outputPath": "C:\\TFS\\martijna\\Nijn\\Minor.Nijn\\Minor.Nijn\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\Marti\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\MartijnvA\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [

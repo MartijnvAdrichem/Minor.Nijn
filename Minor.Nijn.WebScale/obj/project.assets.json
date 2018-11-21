@@ -4604,23 +4604,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Marti\\.nuget\\packages\\": {},
+    "C:\\Users\\MartijnvA\\.nuget\\packages\\": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "2.1.0",
     "restore": {
-      "projectUniqueName": "D:\\Github\\Minor.Nijn\\Minor.Nijn\\Minor.Nijn.WebScale\\Minor.Nijn.WebScale.csproj",
+      "projectUniqueName": "C:\\TFS\\martijna\\Nijn\\Minor.Nijn\\Minor.Nijn.WebScale\\Minor.Nijn.WebScale.csproj",
       "projectName": "Minor.Nijn.WebScale",
-      "projectPath": "D:\\Github\\Minor.Nijn\\Minor.Nijn\\Minor.Nijn.WebScale\\Minor.Nijn.WebScale.csproj",
-      "packagesPath": "C:\\Users\\Marti\\.nuget\\packages\\",
-      "outputPath": "D:\\Github\\Minor.Nijn\\Minor.Nijn\\Minor.Nijn.WebScale\\obj\\",
+      "projectPath": "C:\\TFS\\martijna\\Nijn\\Minor.Nijn\\Minor.Nijn.WebScale\\Minor.Nijn.WebScale.csproj",
+      "packagesPath": "C:\\Users\\MartijnvA\\.nuget\\packages\\",
+      "outputPath": "C:\\TFS\\martijna\\Nijn\\Minor.Nijn\\Minor.Nijn.WebScale\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\Marti\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\MartijnvA\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -4633,8 +4633,8 @@
       "frameworks": {
         "netcoreapp2.1": {
           "projectReferences": {
-            "D:\\Github\\Minor.Nijn\\Minor.Nijn\\Minor.Nijn\\Minor.Nijn.csproj": {
-              "projectPath": "D:\\Github\\Minor.Nijn\\Minor.Nijn\\Minor.Nijn\\Minor.Nijn.csproj"
+            "C:\\TFS\\martijna\\Nijn\\Minor.Nijn\\Minor.Nijn\\Minor.Nijn.csproj": {
+              "projectPath": "C:\\TFS\\martijna\\Nijn\\Minor.Nijn\\Minor.Nijn\\Minor.Nijn.csproj"
             }
           }
         }
