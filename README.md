@@ -13,6 +13,16 @@ Initialize this part of the framework with using the RabbitMQContextBuilder, for
                     .WithAddress("localhost", 5672)
                     .WithCredentials(userName: "guest", password: "guest");
 ```
+You can also use the environment variables (for docker). (note: the names are case sensitive)
+```
+USERNAME guest
+PASSWORD guest
+PORT 5672
+HOSTNAME localhost
+EXCHANGENAME exchange
+
+```
+
 
 The WebScale framework is a wrapper around the Nijn framework. With this framework you can add Topic and Command attributes above your methods. These attributes will be converted into actual queues on the Exchange. You initialize this with the following code
 
