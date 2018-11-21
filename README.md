@@ -5,7 +5,7 @@ this framework consists of 2 parts (Minor.Nijn and Minor.Nijn.Webscale)
 Minor.Nijn is the basic wrapper around RabbitMQ (event sending/receiving and RPC call sending/receiving).
 It also has a basic test environment used for integration testing.
 
-Initialize this part of the framework with using the RabbitMQContextBuilder, for example:
+Initialize this part of the framework by using the RabbitMQContextBuilder, for example:
 
 ```
   var connectionBuilder = new RabbitMQContextBuilder()
@@ -132,7 +132,7 @@ To send an event use the following code, make sure to use the right topic name:
 ```
 
 
-To send an command use the following code, if there is no response in 5 seconds an "NoResponseException" will be thrown
+To send a command use the following code, if there is no response within 5 seconds a "NoResponseException" will be thrown
 ```
         SomeCommand command = new SomeCommand();
         public Controller( IBusContext<IConnection> context)
