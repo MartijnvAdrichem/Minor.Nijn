@@ -13,7 +13,9 @@ Initialize this part of the framework with using the RabbitMQContextBuilder, for
                     .WithAddress("localhost", 5672)
                     .WithCredentials(userName: "guest", password: "guest");
 ```
+
 You can also use the environment variables (for docker). (note: the names are case sensitive)
+
 ```
 USERNAME guest
 PASSWORD guest
@@ -23,8 +25,8 @@ EXCHANGENAME exchange
 
 ```
 
-
 The WebScale framework is a wrapper around the Nijn framework. With this framework you can add Topic and Command attributes above your methods. These attributes will be converted into actual queues on the Exchange. You initialize this with the following code
+
 
 ```
 ILoggerFactory loggerFactory = new LoggerFactory();
@@ -60,6 +62,32 @@ using (var context = connectionBuilder.CreateContext())
     }
 }
 
+```
+
+If you are using something like ASP.NET you cannot make use of the Console.ReadKey() method so instead of that use
+
+
+```
+private ManualResetEvent _stopEvent = new ManualResetEvent(false);
+
+    var builder = new MicroserviceHostBuilder()
+    .RegisterDependencies(nijnServices =>
+    {
+        nijnServices.AddSingleton<IBusContext<IConnection>>(context); 
+    })
+    .WithContext(nijnBusContext)
+    .UseConventions();
+
+
+    new Thread(() =>
+    {
+        using (var host = builder.CreateHost())
+        {
+            host.StartListening();
+            _stopEvent.WaitOne();
+        }
+
+    }).Start();
 
 ```
 
