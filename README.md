@@ -120,26 +120,22 @@ An example of a class that will be converted into queues:
 
 To send an event use the following code, make sure to use the right topic name: 
 ```
-        public Controller( IBusContext<IConnection> context)
+        public Controller( IEventPublisher publisher)
         {
-            _context = context;
+            _publisher = publisher;
         }
-
-        var messageSender = new EventPublisher(_context);
             messageSender.Publish(new InheritOfDomainEvent(topicname, ...));
 ```
 
 
 To send a command use the following code, if there is no response within 5 seconds a "NoResponseException" will be thrown
 ```
-        SomeCommand command = new SomeCommand();
-        public Controller( IBusContext<IConnection> context)
+        
+        public Controller( ICommandPublisher commandPublisher)
         {
-            _context = context;
+            _publisher = commandPublisher
         }
-            
-        var publisher = new CommandPublisher(_context, "QueueToSendTo");
-        var result = await publisher.Publish<T>(command);
+        var result = await publisher.Publish<T>(command, "QueueToSendTo");
 ```
 
 ## Testbus
