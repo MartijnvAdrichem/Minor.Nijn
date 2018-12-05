@@ -41,7 +41,7 @@ namespace Minor.Nijn.TestBus.Test
             target.StartReceivingCommands((cm) =>
             {
                 autoReset.Set();
-                return new CommandResponseMessage(cm.Message, null, null);
+                return Task.Run(() => new CommandResponseMessage(cm.Message, null, null));
             });
 
             context.CommandQueues["queue"].Enqueue(new TestBusCommandMessage(new CommandRequestMessage("message", null), new BasicProperties() { ReplyTo = "responseQueue" }));
@@ -59,8 +59,8 @@ namespace Minor.Nijn.TestBus.Test
             TestBusContext context = new TestBusContext();
             var receiver = context.CreateCommandReceiver("queue");
             receiver.DeclareCommandQueue();
-            receiver.StartReceivingCommands((cm) => { return new CommandResponseMessage(cm.Message, "", cm.CorrelationId); });
-            Assert.ThrowsException<BusConfigurationException>(() => receiver.StartReceivingCommands((cm) =>  new CommandResponseMessage(cm.Message, "", cm.CorrelationId)));
+            receiver.StartReceivingCommands((cm) => { return Task.Run(() => new CommandResponseMessage(cm.Message, "", cm.CorrelationId)); });
+            Assert.ThrowsException<BusConfigurationException>(() => receiver.StartReceivingCommands((cm) => Task.Run(() => new CommandResponseMessage(cm.Message, "", cm.CorrelationId))));
         }
 
         [TestMethod]
@@ -83,7 +83,7 @@ namespace Minor.Nijn.TestBus.Test
             receiver.StartReceivingCommands((cm) =>
             {
                 var message = "message2";
-                return new CommandResponseMessage(message, "", cm.CorrelationId);
+                return Task.Run(() => new CommandResponseMessage(message, "", cm.CorrelationId));
             });
 
             var mess = new CommandRequestMessage("message", null);

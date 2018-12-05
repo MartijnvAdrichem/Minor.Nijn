@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Minor.Nijn.RabbitMQBus
 {
@@ -82,14 +83,14 @@ namespace Minor.Nijn.RabbitMQBus
                 throw new ArgumentNullException(nameof(callback));
             }
 
-            var consumer = new EventingBasicConsumer(Channel);
-            consumer.Received += (model, ea) =>
+            var consumer = new AsyncEventingBasicConsumer(Channel);
+            consumer.Received += async (model, ea) =>
             {
                 var body = ea.Body;
                 var message = Encoding.UTF8.GetString(body);
 
                 var eventMessage = new EventMessage(ea.RoutingKey, message, ea.BasicProperties.Type, ea.BasicProperties.Timestamp.UnixTime, ea.BasicProperties.CorrelationId);
-                callback(eventMessage);
+                await Task.Run(() => callback(eventMessage));
             };
 
             Channel.BasicConsume(queue: QueueName,

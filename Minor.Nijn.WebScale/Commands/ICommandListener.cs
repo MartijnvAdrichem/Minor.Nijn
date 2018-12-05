@@ -1,5 +1,6 @@
 ﻿using RabbitMQ.Client;
 using System;
+using System.Threading.Tasks;
 
 namespace Minor.Nijn.WebScale
 {
@@ -8,7 +9,7 @@ namespace Minor.Nijn.WebScale
         string QueueName { get; }
 
         void DeclareQueue(IBusContext<IConnection> context);
-        CommandResponseMessage Handle(CommandRequestMessage commandMessage);
+        Task<CommandResponseMessage> Handle(CommandRequestMessage commandMessage);
         void StartListening(IMicroserviceHost host);
     }
 }

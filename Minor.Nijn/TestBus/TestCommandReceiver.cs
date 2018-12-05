@@ -37,7 +37,7 @@ namespace Minor.Nijn.TestBus
             {
                 throw new BusConfigurationException("Already listening to queuename " + QueueName);
             }
-            new Task(() =>
+            new Task(async () =>
             {
                 var queue = Context.CommandQueues[QueueName];
 
@@ -55,7 +55,7 @@ namespace Minor.Nijn.TestBus
 
                     try
                     {
-                        response = callback.Invoke(command.Message as CommandRequestMessage);
+                        response = await callback.Invoke(command.Message as CommandRequestMessage);
                     }
                     catch (Exception e)
                     {

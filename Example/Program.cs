@@ -27,13 +27,13 @@ namespace VoorbeeldMicroservice
                     .WithCredentials(userName: "guest", password: "guest");
 
 
-            using (var context = new TestBusContext())
+            using (var context = connectionBuilder.CreateContext())
             {
                 var builder = new MicroserviceHostBuilder()
                     .SetLoggerFactory(loggerFactory)
                     .RegisterDependencies((services) =>
                     {
-                        services.AddTransient<IDataMapper, SinaasAppelDataMapper>();
+                      services.AddTransient<IDataMapper, SinaasAppelDataMapper>();
                     })
                     .WithContext(context)
                     .UseConventions();
@@ -46,22 +46,33 @@ namespace VoorbeeldMicroservice
                     Console.WriteLine("Press any key to quit.");
 
                     var publisher = new EventPublisher(context);
-                    publisher.Publish(new PolisToegevoegdEvent("MVM.Polisbeheer.PolisToegevoegd") { Message = "Hey" });
-                    publisher.Publish(new HenkToegevoegdEvent("Test") { Test = "Oi" });
+                    publisher.Publish(new PolisToegevoegdEvent("MVM.Polisbeheer.PolisToegevoegd") {Message = "Hey"});
+                    publisher.Publish(new HenkToegevoegdEvent("Test") {Test = "Oi"});
 
-                    Test(context);
-                    Console.ReadKey();
+                    int i = 0;
+                    while (true)
+                    {
+
+                        Console.ReadKey();
+                        Test(context, i);
+                        Test(context, i * 100);
+                        i++;
+                    }
                 }
             }
         }
 
-        private static async Task Test(IBusContext<IConnection> context)
+        private static async Task Test(IBusContext<IConnection> context, int multiply)
         {
-            CommandPublisher commandPublisher = new CommandPublisher(context, "Testje");
-            var testcommand = new TestCommand() { i = 100 };
-            
-            var result = await commandPublisher.Publish<int>(testcommand);
-            Console.WriteLine("result: " + result);
+            CommandPublisher commandPublisher = new CommandPublisher(context);
+            var testcommand = new TestCommand() { i = new Random().Next(99,100) * multiply };
+
+            Console.WriteLine($"{multiply} sending");
+
+
+            var result1 = await commandPublisher.Publish<int>(testcommand, "TestjeAsync");
+
+            Console.WriteLine($"{multiply} result:" + result1);
         }
     }
 }

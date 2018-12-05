@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Minor.Nijn.RabbitMQBus
 {
@@ -10,6 +11,6 @@ namespace Minor.Nijn.RabbitMQBus
         void StartReceivingCommands(CommandReceivedCallback callback);
     }
 
-    public delegate CommandResponseMessage CommandReceivedCallback(CommandRequestMessage commandMessage);
+    public delegate Task<CommandResponseMessage> CommandReceivedCallback(CommandRequestMessage commandMessage);
 
 }

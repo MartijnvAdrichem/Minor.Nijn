@@ -3,6 +3,7 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Minor.Nijn.RabbitMQBus
 {
@@ -34,49 +35,59 @@ namespace Minor.Nijn.RabbitMQBus
         {
             CheckDisposed();
 
-            var consumer = new EventingBasicConsumer(_channel);
+            var consumer = new AsyncEventingBasicConsumer(_channel);
             _channel.BasicConsume(queue: QueueName,
-                                 autoAck: false,
-                                 consumerTag: "",
-                                 noLocal: false,
-                                 exclusive: false,
-                                 arguments: null,
-                                 consumer: consumer);
+                autoAck: false,
+                consumerTag: "",
+                noLocal: false,
+                exclusive: false,
+                arguments: null,
+                consumer: consumer);
 
-            consumer.Received += (s, ea) =>
+            consumer.Received +=  async (s, ea) =>
             {
-                var body = ea.Body;
-                var props = ea.BasicProperties;
-                var replyProps = _channel.CreateBasicProperties();
-                replyProps.CorrelationId = props.CorrelationId;
-                
-                var message = Encoding.UTF8.GetString(body);
-                CommandResponseMessage response = null; 
-                try
-                {
-                    response = callback(new CommandRequestMessage(message, props.CorrelationId));
-                    replyProps.Type = response.MessageType.ToString();
-                }
-                catch (Exception e)
-                {
-                    var realException = e.InnerException;
-                    response = new CommandResponseMessage(realException.Message, realException.GetType().ToString(), props.CorrelationId);
-                    replyProps.Type = realException.GetType().ToString();
-                }
-                finally
-                {
-                    _channel.BasicPublish(exchange: "",
-                                         routingKey: props.ReplyTo,
-                                         mandatory: false,
-                                         basicProperties: replyProps,
-                                         body: response?.EncodeMessage());
+                Console.WriteLine("Delivery");
+                await Handle(s, ea, callback);
+                Console.WriteLine("Done");
 
-                    _channel.BasicAck(deliveryTag: ea.DeliveryTag,
-                                     multiple: false);
-                }
             };
-            _log.LogInformation("Started listening for commands on queue {0} ", QueueName);
+     
+         
+        }
 
+        public async Task Handle(object s, BasicDeliverEventArgs ea, CommandReceivedCallback callback)
+        {
+            var body = ea.Body;
+            var props = ea.BasicProperties;
+            var replyProps = _channel.CreateBasicProperties();
+            replyProps.CorrelationId = props.CorrelationId;
+
+            var message = Encoding.UTF8.GetString(body);
+            CommandResponseMessage response = null;
+            try
+            {
+                response = await callback(new CommandRequestMessage(message, props.CorrelationId));
+                replyProps.Type = response.MessageType.ToString();
+            }
+            catch (Exception e)
+            {
+                var realException = e.InnerException;
+                response = new CommandResponseMessage(realException.Message, realException.GetType().ToString(),
+                    props.CorrelationId);
+                replyProps.Type = realException.GetType().ToString();
+            }
+            finally
+            {
+                _channel.BasicPublish(exchange: "",
+                    routingKey: props.ReplyTo,
+                    mandatory: false,
+                    basicProperties: replyProps,
+                    body: response?.EncodeMessage());
+
+                _channel.BasicAck(deliveryTag: ea.DeliveryTag,
+                    multiple: false);
+            }
+        _log.LogInformation("Started listening for commands on queue {0} ", QueueName);
         }
 
         #region Dispose

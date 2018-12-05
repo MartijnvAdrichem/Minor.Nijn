@@ -3,6 +3,7 @@ using Minor.Nijn.WebScale;
 using Newtonsoft.Json;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Minor.Nijn.WebScale.Attributes;
 
 namespace VoorbeeldMicroservice
@@ -26,6 +27,14 @@ namespace VoorbeeldMicroservice
         {
             //Thread.Sleep(1000);
             Console.WriteLine("TestCommand ontvangen:");
+            return evt.i * evt.i;
+        }
+        [Command("TestjeAsync")]
+        public async Task<int> CommandListnerAsync(TestCommand evt)
+        {
+            //Thread.Sleep(1000);
+            Console.WriteLine("TestCommandAsync ontvangen:");
+            await Task.Delay(new Random().Next(100, 3000));
             return evt.i * evt.i;
         }
 

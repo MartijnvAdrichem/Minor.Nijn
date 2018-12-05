@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using RabbitMQ.Client;
 using System;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Minor.Nijn.RabbitMQBus;
@@ -11,22 +12,20 @@ namespace Minor.Nijn.WebScale
     {
         private readonly ILogger _logger;
 
-        public CommandPublisher(IBusContext<IConnection> context, string queueName)
+        public CommandPublisher(IBusContext<IConnection> context)
         {
-            QueueName = queueName;
             Sender = context.CreateCommandSender();
             _logger = NijnLogger.CreateLogger<CommandPublisher>();
         }
 
         private ICommandSender Sender { get; }
-        public string QueueName { get; set; }
 
-        public async Task<T> Publish<T>(DomainCommand domainCommand)
+        public async Task<T> Publish<T>(DomainCommand domainCommand, string queueName)
         {
             domainCommand.TimeStamp = DateTime.Now.Ticks;
             var body = JsonConvert.SerializeObject(domainCommand);
             var commandMessage = new CommandRequestMessage(body, domainCommand.CorrelationId);
-            var task = Sender.SendCommandAsync(commandMessage, QueueName);
+            var task = Sender.SendCommandAsync(commandMessage, queueName);
 
             if (await Task.WhenAny(task, Task.Delay(5000)) == task)
             {
@@ -40,7 +39,8 @@ namespace Minor.Nijn.WebScale
                     object e = null;
                     try
                     {
-                        e = Activator.CreateInstance(Type.GetType(result.MessageType), result.Message);
+                        var type = Assembly.GetCallingAssembly().GetType(result.MessageType);
+                        e = Activator.CreateInstance(type, result.Message);
                     }
                     catch (Exception)
                     {

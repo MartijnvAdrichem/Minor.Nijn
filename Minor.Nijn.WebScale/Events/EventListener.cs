@@ -58,18 +58,18 @@ namespace Minor.Nijn.WebScale
 
                 if (method.MethodParameter == null)
                 {
-                    StartMethod(instance, method.MethodInfo, null).Start();
-                    continue;
+                     StartMethod(instance, method.MethodInfo, null).Start();
+                    continue;;
                 }
       
                 if (method.TopicName == "#" && method.MethodParameter.GetType() == typeof(IEventMessage))
                 {
-                     StartMethod(instance, method.MethodInfo, new[] { receivedMessage }).Start();
+                     StartMethod(instance, method.MethodInfo, new[] {receivedMessage}).Start();
                     continue;
                 }
 
                 var param = JsonConvert.DeserializeObject(receivedMessage.Message, method.MethodParameter.ParameterType);
-                StartMethod(instance, method.MethodInfo, new[] {param}).Start();
+                 StartMethod(instance, method.MethodInfo, new[] {param}).Start();
             }
         }
 

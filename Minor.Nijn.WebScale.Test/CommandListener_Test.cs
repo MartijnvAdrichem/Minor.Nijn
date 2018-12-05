@@ -3,6 +3,7 @@ using Moq;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using System.Linq;
+using System.Threading.Tasks;
 using Minor.Nijn.RabbitMQBus;
 
 namespace Minor.Nijn.WebScale.Test
@@ -72,7 +73,7 @@ namespace Minor.Nijn.WebScale.Test
         }
 
         [TestMethod]
-        public void HandleTest()
+        public async Task HandleTest()
         {
             var methodCommandInfo = new MethodCommandInfo(typeof(TestClass), 
                 typeof(TestClass).GetMethod("TestCalled"), 
@@ -98,7 +99,7 @@ namespace Minor.Nijn.WebScale.Test
 
             var message = new CommandRequestMessage(JsonConvert.SerializeObject(command), null);
 
-            var result = target.Handle(message);
+            var result = await target.Handle(message);
 
             var objectResult = JsonConvert.DeserializeObject<TestCommand>(result.Message);
             Assert.AreEqual("Message2", objectResult.Message);

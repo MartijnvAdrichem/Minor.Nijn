@@ -13,7 +13,7 @@ namespace Minor.Nijn.RabbitMQBus
 
         private IModel Channel { get; }
         private readonly string _replyQueueName;
-        private readonly EventingBasicConsumer _consumer;
+        private readonly AsyncEventingBasicConsumer _consumer;
         private readonly ConcurrentDictionary<string, TaskCompletionSource<CommandResponseMessage>> _callbackMapper =
                     new ConcurrentDictionary<string, TaskCompletionSource<CommandResponseMessage>>();
 
@@ -26,16 +26,20 @@ namespace Minor.Nijn.RabbitMQBus
             _replyQueueName = Channel.QueueDeclare("", false, false, true).QueueName;
             _logger = NijnLogger.CreateLogger<RabbitMQCommandSender>();
 
-            _consumer = new EventingBasicConsumer(Channel);
-            _consumer.Received += (model, ea) =>
+            _consumer = new AsyncEventingBasicConsumer(Channel);
+            _consumer.Received += async (model, ea) =>
             {
-                if (!_callbackMapper.TryRemove(ea.BasicProperties.CorrelationId, out TaskCompletionSource<CommandResponseMessage> tcs))
+                await Task.Run(() => {
+                    if (!_callbackMapper.TryRemove(ea.BasicProperties.CorrelationId, out TaskCompletionSource<CommandResponseMessage> tcs))
                     return;
                 var body = ea.Body;
                 var message = Encoding.UTF8.GetString(body);
 
                 var commandResponse = new CommandResponseMessage(message, ea.BasicProperties.Type, ea.BasicProperties.CorrelationId);
                 tcs.TrySetResult(commandResponse);
+                });
+
+           
             };
 
             _logger.LogInformation("Created response queue with name {0}", _replyQueueName);

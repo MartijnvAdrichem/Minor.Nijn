@@ -196,6 +196,19 @@ namespace Minor.Nijn.WebScale
             return this;
         }
 
+        public MicroserviceHostBuilder AddCommandListener<T>()
+        {
+            var type = typeof(T);
+            var eventListenerAttribute = type.GetCustomAttribute<CommandListenerAttribute>();
+            if (eventListenerAttribute == null) return this;
+
+            if (_commandListeners == null) _commandListeners = new List<CommandListener>();
+
+            BuildCommandListener(type);
+
+            return this;
+        }
+
         /// <summary>
         ///     Configures logging functionality for the MicroserviceHost
         /// </summary>

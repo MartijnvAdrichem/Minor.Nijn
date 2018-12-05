@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Minor.Nijn.RabbitMQBus;
 using Moq;
@@ -69,9 +70,9 @@ namespace Minor.Nijn.Test.RabbitMQBus
             channelMock.VerifyAll();
         }
 
-        private CommandResponseMessage Callback(CommandRequestMessage commandmessage)
+        private Task<CommandResponseMessage> Callback(CommandRequestMessage commandmessage)
         {
-            return new CommandResponseMessage("test", typeof(string).FullName, "test");
+            return Task.Run(() => new CommandResponseMessage("test", typeof(string).FullName, "test"));
         }
     }
 

@@ -28,10 +28,10 @@ namespace Minor.Nijn.WebScale.Test
             var iBusContextMock = new Mock<IBusContext<IConnection>>(MockBehavior.Strict);
             iBusContextMock.Setup(m => m.CreateCommandSender()).Returns(sender.Object);
 
-            var target = new CommandPublisher(iBusContextMock.Object, "queue");
+            var target = new CommandPublisher(iBusContextMock.Object);
             var testCommand = new TestCommand();
 
-            TestCommand result = await target.Publish<TestCommand>(testCommand);
+            TestCommand result = await target.Publish<TestCommand>(testCommand, "queue");
 
             Assert.IsInstanceOfType(result, typeof(TestCommand));
             Assert.AreEqual("message2", (result as TestCommand).Message);
@@ -50,12 +50,12 @@ namespace Minor.Nijn.WebScale.Test
             var iBusContextMock = new Mock<IBusContext<IConnection>>(MockBehavior.Strict);
             iBusContextMock.Setup(m => m.CreateCommandSender()).Returns(sender.Object);
 
-            var target = new CommandPublisher(iBusContextMock.Object, "queue");
+            var target = new CommandPublisher(iBusContextMock.Object);
             var testCommand = new TestCommand();
 
              var exception = await Assert.ThrowsExceptionAsync<ArgumentException>(async () =>
                  {
-                     await target.Publish<TestCommand>(testCommand);
+                     await target.Publish<TestCommand>(testCommand, "queue");
                  });
             Assert.AreEqual("error", exception.Message);
                
@@ -74,12 +74,12 @@ namespace Minor.Nijn.WebScale.Test
             var iBusContextMock = new Mock<IBusContext<IConnection>>(MockBehavior.Strict);
             iBusContextMock.Setup(m => m.CreateCommandSender()).Returns(sender.Object);
 
-            var target = new CommandPublisher(iBusContextMock.Object, "queue");
+            var target = new CommandPublisher(iBusContextMock.Object);
             var testCommand = new TestCommand();
 
             var exception = await Assert.ThrowsExceptionAsync<InvalidCastException>(async () =>
             {
-                await target.Publish<TestCommand>(testCommand);
+                await target.Publish<TestCommand>(testCommand, "queue");
             });
             Assert.AreEqual("an unknown exception occured (message error), exception type was RandomException", exception.Message);
 

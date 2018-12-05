@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using RabbitMQ.Client;
 using System;
+using System.Threading.Tasks;
 using Minor.Nijn.RabbitMQBus;
 
 namespace Minor.Nijn.WebScale
@@ -31,15 +32,32 @@ namespace Minor.Nijn.WebScale
             _receiver.StartReceivingCommands(Handle);
         }
 
-        public CommandResponseMessage Handle(CommandRequestMessage commandMessage)
-        {
-            var instance = Host.CreateInstanceOfType(_methodCommandInfo.ClassType);
+        public async Task<CommandResponseMessage> Handle(CommandRequestMessage commandMessage)
+        {       
+                var instance = Host.CreateInstanceOfType(_methodCommandInfo.ClassType);
 
-            var param = JsonConvert.DeserializeObject(commandMessage.Message, _methodCommandInfo.MethodParameter.ParameterType);
-            object result = _methodCommandInfo.MethodInfo.Invoke(instance, new[] {param});
-            var resultJson = JsonConvert.SerializeObject(result);
-            return new CommandResponseMessage(resultJson, _methodCommandInfo.MethodReturnType.ToString(), commandMessage.CorrelationId);
-       }
+                if (instance == null)
+                {
+                    throw new NoSuitableConstructorException(
+                        "No suitable constructor found, make sure all your dependencies are injected");
+                }
+
+                var param = JsonConvert.DeserializeObject(commandMessage.Message,
+                    _methodCommandInfo.MethodParameter.ParameterType);
+
+                object result = _methodCommandInfo.MethodInfo.Invoke(instance, new[] {param});
+                object taskResult = null;
+
+                if (_methodCommandInfo.MethodReturnType.IsGenericType &&
+                    _methodCommandInfo.MethodReturnType.GetGenericTypeDefinition() == typeof(Task<>))
+                {
+                    taskResult = await ((dynamic) result);
+                }
+
+                var resultJson = JsonConvert.SerializeObject(taskResult ?? result);
+                return new CommandResponseMessage(resultJson, _methodCommandInfo.MethodReturnType.ToString(),
+                    commandMessage.CorrelationId);
+        }
 
         public void Dispose()
         {
