@@ -1,18 +1,15 @@
-﻿using Newtonsoft.Json;
-using RabbitMQ.Client;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using Minor.Nijn.RabbitMQBus;
+using Newtonsoft.Json;
+using RabbitMQ.Client;
 
-namespace Minor.Nijn.WebScale
+namespace Minor.Nijn.WebScale.Commands
 {
     public class CommandListener : IDisposable, ICommandListener
     {
-
-        public string QueueName { get; }
-        private ICommandReceiver _receiver;
         private readonly MethodCommandInfo _methodCommandInfo;
-        public IMicroserviceHost Host { get; private set; }
+        private ICommandReceiver _receiver;
 
         public CommandListener(MethodCommandInfo methodCommandInfo)
         {
@@ -20,10 +17,14 @@ namespace Minor.Nijn.WebScale
             QueueName = _methodCommandInfo.QueueName;
         }
 
+        public IMicroserviceHost Host { get; private set; }
+
+        public string QueueName { get; }
+
         public void DeclareQueue(IBusContext<IConnection> context)
         {
             _receiver = context.CreateCommandReceiver(QueueName);
-            _receiver.DeclareCommandQueue();         
+            _receiver.DeclareCommandQueue();
         }
 
         public void StartListening(IMicroserviceHost host)
@@ -33,30 +34,34 @@ namespace Minor.Nijn.WebScale
         }
 
         public async Task<CommandResponseMessage> Handle(CommandRequestMessage commandMessage)
-        {       
-                var instance = Host.CreateInstanceOfType(_methodCommandInfo.ClassType);
+        {
+            var instance = Host.CreateInstanceOfType(_methodCommandInfo.ClassType);
 
-                if (instance == null)
-                {
-                    throw new NoSuitableConstructorException(
-                        "No suitable constructor found, make sure all your dependencies are injected");
-                }
+            if (instance == null)
+                throw new NoSuitableConstructorException(
+                    "No suitable constructor found, make sure all your dependencies are injected");
 
-                var param = JsonConvert.DeserializeObject(commandMessage.Message,
-                    _methodCommandInfo.MethodParameter.ParameterType);
+            var param = JsonConvert.DeserializeObject(commandMessage.Message,
+                _methodCommandInfo.MethodParameter.ParameterType);
 
-                object result = _methodCommandInfo.MethodInfo.Invoke(instance, new[] {param});
-                object taskResult = null;
+            var result = _methodCommandInfo.MethodInfo.Invoke(instance, new[] {param});
 
-                if (_methodCommandInfo.MethodReturnType.IsGenericType &&
-                    _methodCommandInfo.MethodReturnType.GetGenericTypeDefinition() == typeof(Task<>))
-                {
-                    taskResult = await ((dynamic) result);
-                }
+            if (result == null)
+            {
+                throw new InvalidOperationException("Command " + _methodCommandInfo.MethodInfo.Name + " didn't return anything, make sure it returns a value or a Task<T>");
+            }
 
-                var resultJson = JsonConvert.SerializeObject(taskResult ?? result);
-                return new CommandResponseMessage(resultJson, _methodCommandInfo.MethodReturnType.ToString(),
-                    commandMessage.CorrelationId);
+            object taskResult = null;
+
+            if (_methodCommandInfo.MethodReturnType.IsGenericType &&
+                _methodCommandInfo.MethodReturnType.GetGenericTypeDefinition() == typeof(Task<>))
+                taskResult = await (dynamic) result;
+
+            
+
+            var resultJson = JsonConvert.SerializeObject(taskResult ?? result);
+            return new CommandResponseMessage(resultJson, _methodCommandInfo.MethodReturnType.ToString(),
+                commandMessage.CorrelationId);
         }
 
         public void Dispose()

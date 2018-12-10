@@ -1,4 +1,6 @@
-﻿namespace Minor.Nijn.WebScale
+﻿using Minor.Nijn.WebScale.Events;
+
+namespace Minor.Nijn.WebScale
 {
     public interface IEventPublisher
     {

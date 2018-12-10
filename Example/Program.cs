@@ -7,6 +7,8 @@ using System;
 using System.Threading.Tasks;
 using Minor.Nijn;
 using Minor.Nijn.TestBus;
+using Minor.Nijn.WebScale.Commands;
+using Minor.Nijn.WebScale.Events;
 using RabbitMQ.Client;
 
 namespace VoorbeeldMicroservice
@@ -23,7 +25,7 @@ namespace VoorbeeldMicroservice
             //192.168.99.100
             var connectionBuilder = new RabbitMQContextBuilder()
                     .WithExchange("MVM.EventExchange")
-                    .WithAddress("192.168.99.100", 5672)
+                    .WithAddress("localhost", 5672)
                     .WithCredentials(userName: "guest", password: "guest");
 
 
@@ -33,7 +35,7 @@ namespace VoorbeeldMicroservice
                     .SetLoggerFactory(loggerFactory)
                     .RegisterDependencies((services) =>
                     {
-                      services.AddTransient<IDataMapper, SinaasAppelDataMapper>();
+                      //services.AddTransient<IDataMapper, SinaasAppelDataMapper>();
                     })
                     .WithContext(context)
                     .UseConventions();
@@ -55,14 +57,13 @@ namespace VoorbeeldMicroservice
 
                         Console.ReadKey();
                         Test(context, i);
-                        Test(context, i * 100);
                         i++;
                     }
                 }
             }
         }
 
-        private static async Task Test(IBusContext<IConnection> context, int multiply)
+        private static void Test(IBusContext<IConnection> context, int multiply)
         {
             CommandPublisher commandPublisher = new CommandPublisher(context);
             var testcommand = new TestCommand() { i = new Random().Next(99,100) * multiply };
@@ -70,7 +71,7 @@ namespace VoorbeeldMicroservice
             Console.WriteLine($"{multiply} sending");
 
 
-            var result1 = await commandPublisher.Publish<int>(testcommand, "TestjeAsync");
+            var result1 = commandPublisher.Publish<int>(testcommand, "TestjeAsync").Result;
 
             Console.WriteLine($"{multiply} result:" + result1);
         }

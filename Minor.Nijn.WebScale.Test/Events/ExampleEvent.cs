@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Minor.Nijn.WebScale.Events;
+using Newtonsoft.Json;
 
 namespace Minor.Nijn.WebScale.Test
 {

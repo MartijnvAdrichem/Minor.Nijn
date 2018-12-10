@@ -1,8 +1,8 @@
-﻿using RabbitMQ.Client;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using RabbitMQ.Client;
 
-namespace Minor.Nijn.WebScale
+namespace Minor.Nijn.WebScale.Commands
 {
     public interface ICommandListener : IDisposable
     {

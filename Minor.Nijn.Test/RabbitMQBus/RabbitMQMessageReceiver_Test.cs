@@ -162,14 +162,14 @@ namespace Minor.Nijn.RabbitMQBus.Test
         {
             // Arrange
             var channelMock = new Mock<IModel>();
-            AsyncEventingBasicConsumer basicConsumer = null;
+            EventingBasicConsumer basicConsumer = null;
             channelMock.Setup(c => c.BasicConsume("TestQueue",
                                                   true,
                                                   "",
                                                   false,
                                                   false,
                                                   null,
-                                                  It.IsAny<AsyncEventingBasicConsumer>()))
+                                                  It.IsAny<EventingBasicConsumer>()))
                        .Callback((string queue,
                            bool autoAck,
                            string consumerTag,
@@ -178,7 +178,7 @@ namespace Minor.Nijn.RabbitMQBus.Test
                            IDictionary<string, object> arguments,
                            IBasicConsumer consumer) =>
                        {
-                           basicConsumer = consumer as AsyncEventingBasicConsumer;
+                           basicConsumer = consumer as EventingBasicConsumer;
                        });
 
             var connectionMock = new Mock<IConnection>();
@@ -202,7 +202,8 @@ namespace Minor.Nijn.RabbitMQBus.Test
                 Timestamp = new AmqpTimestamp(1542183431),
                 CorrelationId = "test id"
             };
-            basicConsumer.HandleBasicDeliver("", 0, false, "", "routing.key", properties, Encoding.UTF8.GetBytes("test message")).Wait();
+            basicConsumer.HandleBasicDeliver("", 0, false, "", "routing.key", properties,
+                Encoding.UTF8.GetBytes("test message"));
 
             // Assert
             Assert.IsTrue(callbackWasInvoked);

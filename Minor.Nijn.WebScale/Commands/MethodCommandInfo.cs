@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Reflection;
 
-namespace Minor.Nijn.WebScale
+namespace Minor.Nijn.WebScale.Commands
 {
     public class MethodCommandInfo
     {
-        public MethodCommandInfo(Type classType, MethodInfo methodInfo, ParameterInfo methodParameter, Type methodReturnType, string queueName)
+        public MethodCommandInfo(Type classType, MethodInfo methodInfo, ParameterInfo methodParameter,
+            Type methodReturnType, string queueName)
         {
             ClassType = classType;
             MethodInfo = methodInfo;
@@ -14,7 +15,7 @@ namespace Minor.Nijn.WebScale
             MethodReturnType = methodReturnType;
         }
 
-        public String QueueName { get; set; }
+        public string QueueName { get; set; }
         public Type ClassType { get; set; }
         public MethodInfo MethodInfo { get; set; }
         public ParameterInfo MethodParameter { get; set; }

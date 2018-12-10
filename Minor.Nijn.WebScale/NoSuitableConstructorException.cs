@@ -2,7 +2,7 @@
 
 namespace Minor.Nijn.WebScale
 {
-    class NoSuitableConstructorException : Exception
+    internal class NoSuitableConstructorException : Exception
     {
         public NoSuitableConstructorException()
         {
@@ -11,6 +11,5 @@ namespace Minor.Nijn.WebScale
         public NoSuitableConstructorException(string message) : base(message)
         {
         }
-
     }
 }

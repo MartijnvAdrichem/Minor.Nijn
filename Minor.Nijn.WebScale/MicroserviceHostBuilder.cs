@@ -1,11 +1,13 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using RabbitMQ.Client;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Minor.Nijn.WebScale.Attributes;
+using Minor.Nijn.WebScale.Commands;
+using Minor.Nijn.WebScale.Events;
+using RabbitMQ.Client;
 
 namespace Minor.Nijn.WebScale
 {
@@ -26,11 +28,11 @@ namespace Minor.Nijn.WebScale
     public class MicroserviceHostBuilder
     {
         private static IServiceCollection _services;
+
+        private readonly ILogger _log;
         private List<CommandListener> _commandListeners;
         private IBusContext<IConnection> _context;
         private List<EventListener> _eventListeners;
-
-        private readonly ILogger _log;
 
         public MicroserviceHostBuilder()
         {
@@ -61,7 +63,7 @@ namespace Minor.Nijn.WebScale
 
                 if (eventListenerAttribute == null && commandListenerAttribute == null) continue;
 
-                if (_eventListeners == null)_eventListeners = new List<EventListener>();
+                if (_eventListeners == null) _eventListeners = new List<EventListener>();
                 if (_commandListeners == null) _commandListeners = new List<CommandListener>();
 
                 if (eventListenerAttribute != null) BuildEventListener(eventListenerAttribute, type);
@@ -73,7 +75,7 @@ namespace Minor.Nijn.WebScale
         }
 
         /// <summary>
-        /// Builds a CommandListener class based on the class type
+        ///     Builds a CommandListener class based on the class type
         /// </summary>
         /// <param name="classType"></param>
         private void BuildCommandListener(Type classType)
@@ -97,7 +99,7 @@ namespace Minor.Nijn.WebScale
         }
 
         /// <summary>
-        /// Build a EventListener class based on the attribute and the class type
+        ///     Build a EventListener class based on the attribute and the class type
         /// </summary>
         /// <param name="eventListenerAttribute"></param>
         /// <param name="classType"></param>
@@ -120,7 +122,7 @@ namespace Minor.Nijn.WebScale
         }
 
         /// <summary>
-        /// Builds all methodtopics based on the topics
+        ///     Builds all methodtopics based on the topics
         /// </summary>
         /// <param name="classType"></param>
         /// <param name="eventListener"></param>
@@ -143,7 +145,7 @@ namespace Minor.Nijn.WebScale
         }
 
         /// <summary>
-        /// Gets the paremeterInfo from a method
+        ///     Gets the paremeterInfo from a method
         /// </summary>
         /// <param name="methodInfo"></param>
         /// <returns></returns>
@@ -159,7 +161,7 @@ namespace Minor.Nijn.WebScale
         }
 
         /// <summary>
-        /// Builds the methodTopic 
+        ///     Builds the methodTopic
         /// </summary>
         /// <param name="classType"></param>
         /// <param name="eventListener"></param>

@@ -105,7 +105,6 @@ namespace Minor.Nijn.RabbitMQBus
                 UserName = UserName,
                 Password = _password,
                 Port = Port,
-                DispatchConsumersAsync = true
             };
 
             try

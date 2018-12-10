@@ -1,15 +1,21 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 using RabbitMQ.Client;
-using System;
 
-namespace Minor.Nijn.WebScale
+namespace Minor.Nijn.WebScale.Events
 {
     public class EventPublisher : IEventPublisher, IDisposable
     {
-        private IMessageSender Sender { get; }
         public EventPublisher(IBusContext<IConnection> context)
         {
             Sender = context.CreateMessageSender();
+        }
+
+        private IMessageSender Sender { get; }
+
+        public void Dispose()
+        {
+            Sender?.Dispose();
         }
 
         public void Publish(DomainEvent domainEvent)
@@ -17,11 +23,6 @@ namespace Minor.Nijn.WebScale
             var body = JsonConvert.SerializeObject(domainEvent);
             var eventMessage = new EventMessage(domainEvent.RoutingKey, body);
             Sender.SendMessage(eventMessage);
-        }
-
-        public void Dispose()
-        {
-            Sender?.Dispose();
         }
     }
 }

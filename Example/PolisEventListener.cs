@@ -5,6 +5,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Minor.Nijn.WebScale.Attributes;
+using Minor.Nijn.WebScale.Events;
 
 namespace VoorbeeldMicroservice
 {
@@ -30,12 +31,12 @@ namespace VoorbeeldMicroservice
             return evt.i * evt.i;
         }
         [Command("TestjeAsync")]
-        public async Task<int> CommandListnerAsync(TestCommand evt)
+        public async void CommandListnerAsync(TestCommand evt)
         {
             //Thread.Sleep(1000);
             Console.WriteLine("TestCommandAsync ontvangen:");
             await Task.Delay(new Random().Next(100, 3000));
-            return evt.i * evt.i;
+            //return evt.i * evt.i;
         }
 
         [Topic("MVM.Polisbeheer.PolisToegevoegd")]

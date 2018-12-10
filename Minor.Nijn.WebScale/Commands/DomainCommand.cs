@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Minor.Nijn.WebScale
+﻿namespace Minor.Nijn.WebScale.Commands
 {
     public abstract class DomainCommand
     {

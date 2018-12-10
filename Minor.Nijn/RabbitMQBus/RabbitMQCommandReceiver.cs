@@ -21,21 +21,23 @@ namespace Minor.Nijn.RabbitMQBus
             QueueName = queueName;
             _log = NijnLogger.CreateLogger<RabbitMQCommandReceiver>();
         }
+
         public void DeclareCommandQueue()
         {
             CheckDisposed();
 
             _log.LogInformation("Declared a queue {0} for commands", QueueName);
-            _channel.QueueDeclare(queue: QueueName, durable: false, exclusive: false, autoDelete: true, arguments: null);
+            _channel.QueueDeclare(queue: QueueName, durable: false, exclusive: false, autoDelete: true,
+                arguments: null);
             _channel.BasicQos(0, 1, false);
-         
+
         }
 
         public void StartReceivingCommands(CommandReceivedCallback callback)
         {
             CheckDisposed();
 
-            var consumer = new AsyncEventingBasicConsumer(_channel);
+            var consumer = new EventingBasicConsumer(_channel);
             _channel.BasicConsume(queue: QueueName,
                 autoAck: false,
                 consumerTag: "",
@@ -44,53 +46,44 @@ namespace Minor.Nijn.RabbitMQBus
                 arguments: null,
                 consumer: consumer);
 
-            consumer.Received +=  async (s, ea) =>
+            consumer.Received += (s, ea) =>
             {
-                Console.WriteLine("Delivery");
-                await Handle(s, ea, callback);
-                Console.WriteLine("Done");
+                var body = ea.Body;
+                var props = ea.BasicProperties;
+                var replyProps = _channel.CreateBasicProperties();
+                replyProps.CorrelationId = props.CorrelationId;
 
+                var message = Encoding.UTF8.GetString(body);
+                CommandResponseMessage response = null;
+                try
+                {
+                    response = callback(new CommandRequestMessage(message, props.CorrelationId)).Result;
+                    replyProps.Type = response.MessageType.ToString();
+                }
+                catch (Exception e)
+                {
+                    var realException = e.InnerException;
+                    response = new CommandResponseMessage(realException.Message, realException.GetType().ToString(),
+                        props.CorrelationId);
+                    replyProps.Type = realException.GetType().ToString();
+                }
+                finally
+                {
+                    _channel.BasicPublish(exchange: "",
+                        routingKey: props.ReplyTo,
+                        mandatory: false,
+                        basicProperties: replyProps,
+                        body: response?.EncodeMessage());
+                    _channel.BasicAck(deliveryTag: ea.DeliveryTag,
+                        multiple: false);
+                }
             };
-     
-         
         }
+    
 
-        public async Task Handle(object s, BasicDeliverEventArgs ea, CommandReceivedCallback callback)
-        {
-            var body = ea.Body;
-            var props = ea.BasicProperties;
-            var replyProps = _channel.CreateBasicProperties();
-            replyProps.CorrelationId = props.CorrelationId;
 
-            var message = Encoding.UTF8.GetString(body);
-            CommandResponseMessage response = null;
-            try
-            {
-                response = await callback(new CommandRequestMessage(message, props.CorrelationId));
-                replyProps.Type = response.MessageType.ToString();
-            }
-            catch (Exception e)
-            {
-                var realException = e.InnerException;
-                response = new CommandResponseMessage(realException.Message, realException.GetType().ToString(),
-                    props.CorrelationId);
-                replyProps.Type = realException.GetType().ToString();
-            }
-            finally
-            {
-                _channel.BasicPublish(exchange: "",
-                    routingKey: props.ReplyTo,
-                    mandatory: false,
-                    basicProperties: replyProps,
-                    body: response?.EncodeMessage());
 
-                _channel.BasicAck(deliveryTag: ea.DeliveryTag,
-                    multiple: false);
-            }
-        _log.LogInformation("Started listening for commands on queue {0} ", QueueName);
-        }
-
-        #region Dispose
+    #region Dispose
         public void Dispose()
         {
             Dispose(true);

@@ -83,14 +83,14 @@ namespace Minor.Nijn.RabbitMQBus
                 throw new ArgumentNullException(nameof(callback));
             }
 
-            var consumer = new AsyncEventingBasicConsumer(Channel);
-            consumer.Received += async (model, ea) =>
+            var consumer = new EventingBasicConsumer(Channel);
+            consumer.Received += (model, ea) =>
             {
                 var body = ea.Body;
                 var message = Encoding.UTF8.GetString(body);
 
                 var eventMessage = new EventMessage(ea.RoutingKey, message, ea.BasicProperties.Type, ea.BasicProperties.Timestamp.UnixTime, ea.BasicProperties.CorrelationId);
-                await Task.Run(() => callback(eventMessage));
+                callback(eventMessage);
             };
 
             Channel.BasicConsume(queue: QueueName,

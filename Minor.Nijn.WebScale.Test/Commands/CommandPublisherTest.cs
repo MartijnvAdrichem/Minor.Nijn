@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Minor.Nijn.RabbitMQBus;
+using Minor.Nijn.WebScale.Commands;
 using Moq;
 using Newtonsoft.Json;
 using RabbitMQ.Client;

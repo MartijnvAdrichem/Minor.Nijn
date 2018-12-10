@@ -5,7 +5,8 @@ namespace Minor.Nijn.WebScale
 {
     public class MethodTopicInfo
     {
-        public MethodTopicInfo(Type classType, bool hasDefaultConstructor, string topicName, MethodInfo methodInfo, ParameterInfo methodParameter)
+        public MethodTopicInfo(Type classType, bool hasDefaultConstructor, string topicName, MethodInfo methodInfo,
+            ParameterInfo methodParameter)
         {
             ClassType = classType;
             HasDefaultConstructor = hasDefaultConstructor;

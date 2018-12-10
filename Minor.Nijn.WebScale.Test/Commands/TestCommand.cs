@@ -1,4 +1,6 @@
-﻿namespace Minor.Nijn.WebScale.Test
+﻿using Minor.Nijn.WebScale.Commands;
+
+namespace Minor.Nijn.WebScale.Test
 {
     public class TestCommand : DomainCommand
     {

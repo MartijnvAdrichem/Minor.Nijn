@@ -5,7 +5,7 @@
     <Authors>Martijn van Adrichem, Duncan Verbrugge</Authors>
     <Description>Wrapper around RabbitMQ</Description>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.3</Version>
+    <Version>2.3.1</Version>
     <PackageReleaseNotes></PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/MartijnvAdrichem/Minor.Nijn</PackageProjectUrl>
     <RepositoryUrl>https://github.com/MartijnvAdrichem/Minor.Nijn</RepositoryUrl>

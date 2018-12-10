@@ -1,24 +1,23 @@
-﻿using Microsoft.Extensions.Logging;
-using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
 
 namespace Minor.Nijn.RabbitMQBus
 {
     public class RabbitMQCommandSender : ICommandSender
     {
-
-        private IModel Channel { get; }
-        private readonly string _replyQueueName;
-        private readonly AsyncEventingBasicConsumer _consumer;
         private readonly ConcurrentDictionary<string, TaskCompletionSource<CommandResponseMessage>> _callbackMapper =
-                    new ConcurrentDictionary<string, TaskCompletionSource<CommandResponseMessage>>();
+            new ConcurrentDictionary<string, TaskCompletionSource<CommandResponseMessage>>();
+
+        private readonly EventingBasicConsumer _consumer;
 
         private readonly ILogger _logger;
-        private bool _disposed = false;
+        private readonly string _replyQueueName;
+        private bool _disposed;
 
         public RabbitMQCommandSender(RabbitMQBusContext context)
         {
@@ -26,37 +25,38 @@ namespace Minor.Nijn.RabbitMQBus
             _replyQueueName = Channel.QueueDeclare("", false, false, true).QueueName;
             _logger = NijnLogger.CreateLogger<RabbitMQCommandSender>();
 
-            _consumer = new AsyncEventingBasicConsumer(Channel);
-            _consumer.Received += async (model, ea) =>
+            _consumer = new EventingBasicConsumer(Channel);
+            _consumer.Received += (model, ea) =>
             {
-                await Task.Run(() => {
-                    if (!_callbackMapper.TryRemove(ea.BasicProperties.CorrelationId, out TaskCompletionSource<CommandResponseMessage> tcs))
+                if (!_callbackMapper.TryRemove(ea.BasicProperties.CorrelationId, out var tcs))
                     return;
                 var body = ea.Body;
                 var message = Encoding.UTF8.GetString(body);
 
-                var commandResponse = new CommandResponseMessage(message, ea.BasicProperties.Type, ea.BasicProperties.CorrelationId);
+                var commandResponse =
+                    new CommandResponseMessage(message, ea.BasicProperties.Type, ea.BasicProperties.CorrelationId);
                 tcs.TrySetResult(commandResponse);
-                });
-
-           
             };
 
             _logger.LogInformation("Created response queue with name {0}", _replyQueueName);
         }
 
-       
+        private IModel Channel { get; }
+
+
         public Task<CommandResponseMessage> SendCommandAsync(CommandRequestMessage request, string queueName)
         {
             CheckDisposed();
 
             if (queueName == _replyQueueName)
             {
-                _logger.LogWarning("The queuename {0} has the same same as the reply queue name, this should not happen", _replyQueueName);
+                _logger.LogWarning(
+                    "The queuename {0} has the same same as the reply queue name, this should not happen",
+                    _replyQueueName);
                 throw new ArgumentException($"The queuename {queueName} is the same as the reply queue name");
             }
 
-            IBasicProperties props = Channel.CreateBasicProperties();
+            var props = Channel.CreateBasicProperties();
             props.CorrelationId = Guid.NewGuid().ToString();
             props.ReplyTo = _replyQueueName;
             props.Timestamp = new AmqpTimestamp(DateTime.Now.Ticks);
@@ -65,26 +65,28 @@ namespace Minor.Nijn.RabbitMQBus
             var tcs = new TaskCompletionSource<CommandResponseMessage>();
             _callbackMapper.TryAdd(props.CorrelationId, tcs);
 
-            _logger.LogTrace("Sending command message with correlation id {id} and body {body} ", props.CorrelationId, request);
+            _logger.LogTrace("Sending command message with correlation id {id} and body {body} ", props.CorrelationId,
+                request);
 
-            Channel.BasicPublish(exchange: "",
-                                 routingKey: queueName,
-                                 mandatory: false,
-                                 basicProperties: props,
-                                 body: messageBytes);
+            Channel.BasicPublish("",
+                queueName,
+                false,
+                props,
+                messageBytes);
 
-            Channel.BasicConsume(queue: _replyQueueName,
-                                 autoAck: true,
-                                 consumerTag: "",
-                                 noLocal: false,
-                                 exclusive: false,
-                                 arguments: null,
-                                 consumer: _consumer);
+            Channel.BasicConsume(_replyQueueName,
+                true,
+                "",
+                false,
+                false,
+                null,
+                _consumer);
 
             return tcs.Task;
         }
 
         #region Dispose
+
         public void Dispose()
         {
             Dispose(true);
@@ -96,10 +98,7 @@ namespace Minor.Nijn.RabbitMQBus
             if (_disposed)
                 return;
 
-            if (disposing)
-            {
-                Channel?.Dispose();
-            }
+            if (disposing) Channel?.Dispose();
 
             _disposed = true;
         }
@@ -111,11 +110,9 @@ namespace Minor.Nijn.RabbitMQBus
 
         private void CheckDisposed()
         {
-            if (_disposed)
-            {
-                throw new ObjectDisposedException(GetType().FullName);
-            }
+            if (_disposed) throw new ObjectDisposedException(GetType().FullName);
         }
+
         #endregion
     }
 }

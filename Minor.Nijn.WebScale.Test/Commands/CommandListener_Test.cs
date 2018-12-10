@@ -5,6 +5,7 @@ using RabbitMQ.Client;
 using System.Linq;
 using System.Threading.Tasks;
 using Minor.Nijn.RabbitMQBus;
+using Minor.Nijn.WebScale.Commands;
 
 namespace Minor.Nijn.WebScale.Test
 {

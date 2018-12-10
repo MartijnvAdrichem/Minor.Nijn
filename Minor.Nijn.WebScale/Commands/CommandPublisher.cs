@@ -1,12 +1,12 @@
-﻿using Newtonsoft.Json;
-using RabbitMQ.Client;
-using System;
+﻿using System;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Minor.Nijn.RabbitMQBus;
+using Newtonsoft.Json;
+using RabbitMQ.Client;
 
-namespace Minor.Nijn.WebScale
+namespace Minor.Nijn.WebScale.Commands
 {
     public class CommandPublisher : ICommandPublisher
     {

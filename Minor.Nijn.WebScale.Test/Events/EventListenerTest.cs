@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Minor.Nijn.TestBus;
+using Minor.Nijn.WebScale.Events;
 using Moq;
 
 namespace Minor.Nijn.WebScale.Test
