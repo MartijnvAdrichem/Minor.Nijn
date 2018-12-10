@@ -42,7 +42,7 @@ namespace Minor.Nijn.Test.RabbitMQBus
                 .Verifiable();
 
             channelMock.Setup(m =>
-                m.BasicConsume(replyQueueName, true, "", false, false, null, It.IsAny<EventingBasicConsumer>())).Returns("");
+                m.BasicConsume(replyQueueName, true, "", false, false, null, It.IsAny<AsyncEventingBasicConsumer>())).Returns("");
 
 
             var connectionMock = new Mock<IConnection>(MockBehavior.Strict);
