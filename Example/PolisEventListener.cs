@@ -4,8 +4,11 @@ using Newtonsoft.Json;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Example;
 using Minor.Nijn.WebScale.Attributes;
+using Minor.Nijn.WebScale.Commands;
 using Minor.Nijn.WebScale.Events;
+using Test;
 
 namespace VoorbeeldMicroservice
 {
@@ -14,11 +17,13 @@ namespace VoorbeeldMicroservice
     public class PolisEventListener
     {
         private readonly IDataMapper mapper;
+        private readonly ICommandPublisher _commandPublisher;
 
         //private readonly IDbContextOptions<PolisContext> _context;
-        public PolisEventListener(IDataMapper mapper)
+        public PolisEventListener(IDataMapper mapper, ICommandPublisher commandPublisher)
         {
             this.mapper = mapper;
+            _commandPublisher = commandPublisher;
             mapper.Print();
             //_context = context;
         }
@@ -28,21 +33,32 @@ namespace VoorbeeldMicroservice
         {
             //Thread.Sleep(1000);
             Console.WriteLine("TestCommand ontvangen:");
+            throw new FooException("Dit is een testexception @@@@@@@@@@@@@@@@@");
             return evt.i * evt.i;
         }
         [Command("TestjeAsync")]
-        public async void CommandListnerAsync(TestCommand evt)
+        public async Task<int> CommandListnerAsync(TestCommand evt)
         {
             //Thread.Sleep(1000);
             Console.WriteLine("TestCommandAsync ontvangen:");
             await Task.Delay(new Random().Next(100, 3000));
-            //return evt.i * evt.i;
+            throw new ArgumentException("Fout");
+            return evt.i * evt.i;
         }
 
         [Topic("MVM.Polisbeheer.PolisToegevoegd")]
-        public void Handles(PolisToegevoegdEvent evt)
+        public async Task Handles(PolisToegevoegdEvent evt)
         {
             Console.WriteLine("Werkt dit?????????");
+            try
+            {
+                var result = await _commandPublisher.Publish<long>(new TestCommand() {i = 10}, "Testje");
+                Console.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         [Command("Testje2")]

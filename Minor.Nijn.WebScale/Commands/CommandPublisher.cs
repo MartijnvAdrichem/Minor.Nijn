@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -11,11 +12,13 @@ namespace Minor.Nijn.WebScale.Commands
     public class CommandPublisher : ICommandPublisher
     {
         private readonly ILogger _logger;
+        private readonly Assembly assembly;
 
         public CommandPublisher(IBusContext<IConnection> context)
         {
             Sender = context.CreateCommandSender();
             _logger = NijnLogger.CreateLogger<CommandPublisher>();
+             assembly = Assembly.GetEntryAssembly();
         }
 
         private ICommandSender Sender { get; }
@@ -27,6 +30,7 @@ namespace Minor.Nijn.WebScale.Commands
             var commandMessage = new CommandRequestMessage(body, domainCommand.CorrelationId);
             var task = Sender.SendCommandAsync(commandMessage, queueName);
 
+            
             if (await Task.WhenAny(task, Task.Delay(5000)) == task)
             {
                 // Task completed within timeout.
@@ -39,10 +43,14 @@ namespace Minor.Nijn.WebScale.Commands
                     object e = null;
                     try
                     {
-                        var type = Assembly.GetCallingAssembly().GetType(result.MessageType);
+
+                        var type = assembly.GetType(result.MessageType) ??
+                                   Assembly.GetCallingAssembly().GetType(result.MessageType);
+
                         e = Activator.CreateInstance(type, result.Message);
+                      //  e = MicroserviceHost.CreateException(result.MessageType, result.Message);
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
                         throw new InvalidCastException(
                             $"an unknown exception occured (message {result.Message}), exception type was {result.MessageType}");

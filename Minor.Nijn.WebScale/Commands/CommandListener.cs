@@ -55,9 +55,9 @@ namespace Minor.Nijn.WebScale.Commands
 
             if (_methodCommandInfo.MethodReturnType.IsGenericType &&
                 _methodCommandInfo.MethodReturnType.GetGenericTypeDefinition() == typeof(Task<>))
-                taskResult = await (dynamic) result;
-
-            
+            {
+                taskResult = await (dynamic)result;
+            }
 
             var resultJson = JsonConvert.SerializeObject(taskResult ?? result);
             return new CommandResponseMessage(resultJson, _methodCommandInfo.MethodReturnType.ToString(),

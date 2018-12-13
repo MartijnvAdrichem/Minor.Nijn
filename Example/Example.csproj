@@ -10,6 +10,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Minor.Nijn.WebScale\Minor.Nijn.WebScale.csproj" />
     <ProjectReference Include="..\Minor.Nijn\Minor.Nijn.csproj" />
+    <ProjectReference Include="..\Test\Test.csproj" />
   </ItemGroup>
 
 </Project>

@@ -33,6 +33,7 @@ namespace Minor.Nijn.WebScale
         private List<CommandListener> _commandListeners;
         private IBusContext<IConnection> _context;
         private List<EventListener> _eventListeners;
+        private Assembly _callingAssembly;
 
         public MicroserviceHostBuilder()
         {
@@ -53,9 +54,9 @@ namespace Minor.Nijn.WebScale
         /// </summary>
         public MicroserviceHostBuilder UseConventions()
         {
-            var assembly = Assembly.GetCallingAssembly();
+            _callingAssembly = Assembly.GetCallingAssembly();
 
-            var types = assembly.GetTypes();
+            var types = _callingAssembly.GetTypes();
             foreach (var type in types)
             {
                 var eventListenerAttribute = type.GetCustomAttribute<EventListenerAttribute>();
@@ -201,8 +202,8 @@ namespace Minor.Nijn.WebScale
         public MicroserviceHostBuilder AddCommandListener<T>()
         {
             var type = typeof(T);
-            var eventListenerAttribute = type.GetCustomAttribute<CommandListenerAttribute>();
-            if (eventListenerAttribute == null) return this;
+            var commandListenerAttribute = type.GetCustomAttribute<CommandListenerAttribute>();
+            if (commandListenerAttribute == null) return this;
 
             if (_commandListeners == null) _commandListeners = new List<CommandListener>();
 
@@ -243,7 +244,7 @@ namespace Minor.Nijn.WebScale
                 throw new ArgumentNullException();
             }
 
-            var microServiceHost = new MicroserviceHost(_context, _eventListeners, _commandListeners, _services);
+            var microServiceHost = new MicroserviceHost(_context, _eventListeners, _commandListeners, _services, _callingAssembly);
             return microServiceHost;
         }
     }

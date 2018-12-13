@@ -2,6 +2,7 @@
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -63,9 +64,13 @@ namespace Minor.Nijn.RabbitMQBus
                 catch (Exception e)
                 {
                     var realException = e.InnerException;
-                    response = new CommandResponseMessage(realException.Message, realException.GetType().ToString(),
+                    if (realException is TargetInvocationException)
+                    {
+                        realException = realException.InnerException;
+                    }
+                    response = new CommandResponseMessage(realException.Message, realException.GetType().FullName,
                         props.CorrelationId);
-                    replyProps.Type = realException.GetType().ToString();
+                    replyProps.Type = realException.GetType().FullName;
                 }
                 finally
                 {

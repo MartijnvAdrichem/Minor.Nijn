@@ -35,7 +35,9 @@ namespace VoorbeeldMicroservice
                     .SetLoggerFactory(loggerFactory)
                     .RegisterDependencies((services) =>
                     {
-                      //services.AddTransient<IDataMapper, SinaasAppelDataMapper>();
+                      services.AddTransient<IDataMapper, SinaasAppelDataMapper>();
+                      services.AddTransient<ICommandPublisher, CommandPublisher>();
+                      services.AddSingleton<IBusContext<IConnection>>(context);
                     })
                     .WithContext(context)
                     .UseConventions();
@@ -63,17 +65,25 @@ namespace VoorbeeldMicroservice
             }
         }
 
-        private static void Test(IBusContext<IConnection> context, int multiply)
+        private async static Task Test(IBusContext<IConnection> context, int multiply)
         {
             CommandPublisher commandPublisher = new CommandPublisher(context);
             var testcommand = new TestCommand() { i = new Random().Next(99,100) * multiply };
 
             Console.WriteLine($"{multiply} sending");
 
+            try
+            {
+                var result1 = await commandPublisher.Publish<int>(testcommand, "Testje");
+                Console.WriteLine(result1);
 
-            var result1 = commandPublisher.Publish<int>(testcommand, "TestjeAsync").Result;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
 
-            Console.WriteLine($"{multiply} result:" + result1);
+            //Console.WriteLine($"{multiply} result:" + result1);
         }
     }
 }

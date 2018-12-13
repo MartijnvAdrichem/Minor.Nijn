@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Minor.Nijn.WebScale.Commands;
 using Minor.Nijn.WebScale.Events;
@@ -14,12 +15,13 @@ namespace Minor.Nijn.WebScale
     public class MicroserviceHost : IMicroserviceHost
     {
         private readonly List<CommandListener> _commandListeners;
+        private static  Assembly _callingAssembly;
         private readonly List<EventListener> _eventListeners;
         public IBusContext<IConnection> Context;
 
 
         public MicroserviceHost(IBusContext<IConnection> context, List<EventListener> eventListeners,
-            List<CommandListener> commandListeners, IServiceCollection provider)
+            List<CommandListener> commandListeners, IServiceCollection provider, Assembly callingAssembly)
         {
             Context = context;
 
@@ -28,6 +30,7 @@ namespace Minor.Nijn.WebScale
 
             _eventListeners = eventListeners;
             _commandListeners = commandListeners;
+            _callingAssembly = callingAssembly;
 
             if (provider != null) Provider = provider.BuildServiceProvider();
         }
@@ -66,6 +69,12 @@ namespace Minor.Nijn.WebScale
         public object CreateInstanceOfType(Type type)
         {
             return ActivatorUtilities.CreateInstance(Provider, type);
+        }
+
+        public static Exception CreateException(string messageType, object message)
+        {
+            var type = _callingAssembly.GetType(messageType);
+            return Activator.CreateInstance(type, message) as Exception;
         }
     }
 }
