@@ -115,6 +115,12 @@ An example of a class that will be converted into queues:
       {
         //
       }
+      
+      [Command("SomeOtherCommand")]
+      public async Task<int> CommandListenerAsync(SomeCommand command)
+      {
+      
+      }
 
       //opens a topic (in the "DemoQueue") that will route all events that match this topic to this method.
       [Topic("Some.Thing.SomethingAdded")] 
