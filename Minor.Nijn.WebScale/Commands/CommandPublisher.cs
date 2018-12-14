@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ namespace Minor.Nijn.WebScale.Commands
     {
         private readonly ILogger _logger;
         private readonly Assembly assembly;
+        private static Assembly _previousFoundAssembly;
 
         public CommandPublisher(IBusContext<IConnection> context)
         {
@@ -45,7 +47,8 @@ namespace Minor.Nijn.WebScale.Commands
                     {
 
                         var type = assembly.GetType(result.MessageType) ??
-                                   Assembly.GetCallingAssembly().GetType(result.MessageType);
+                                   Assembly.GetCallingAssembly().GetType(result.MessageType) ??
+                                   GetTypeFromReferencedAssemblies(result.MessageType);
 
                         e = Activator.CreateInstance(type, result.Message);
                       //  e = MicroserviceHost.CreateException(result.MessageType, result.Message);
@@ -65,6 +68,36 @@ namespace Minor.Nijn.WebScale.Commands
 
             _logger.LogWarning("MessageID {cor} did not receive a response", domainCommand.CorrelationId);
             throw new NoResponseException("Could not get a response");
+        }
+
+        private Type GetTypeFromReferencedAssemblies(string name)
+        {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            Type type = _previousFoundAssembly?.GetType(name);
+            if (type != null)
+            {
+                stopwatch.Stop();
+                _logger.LogInformation(@"Time elapsed {0:hh\\:mm\\:ss}", stopwatch.Elapsed.ToString());
+
+                return type;
+            }
+
+            foreach (var referencedAssembly in assembly.GetReferencedAssemblies())
+            {
+               var loadingAssembly = Assembly.Load(referencedAssembly);
+               type = loadingAssembly.GetType(name);
+                if (type != null)
+                {
+                    _previousFoundAssembly = loadingAssembly;
+                    stopwatch.Stop();
+                    _logger.LogInformation(@"Time elapsed {0:hh\\:mm\\:ss}", stopwatch.Elapsed.ToString());
+                    return type;
+                }
+            }
+
+            return null;
         }
 
         public void Dispose()

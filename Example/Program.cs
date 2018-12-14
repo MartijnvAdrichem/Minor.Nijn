@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging.Console;
 using Minor.Nijn.RabbitMQBus;
 using Minor.Nijn.WebScale;
 using System;
+using System.Reflection;
 using System.Threading.Tasks;
 using Minor.Nijn;
 using Minor.Nijn.TestBus;
@@ -18,6 +19,7 @@ namespace VoorbeeldMicroservice
         static void Main(string[] args)
         {
             ILoggerFactory loggerFactory = new LoggerFactory();
+            ConsoleLoggerOptions options = new ConsoleLoggerOptions();
             loggerFactory.AddProvider(
                 new ConsoleLoggerProvider(
                     (text, logLevel) => logLevel >= LogLevel.Debug, true));
@@ -25,8 +27,9 @@ namespace VoorbeeldMicroservice
             //192.168.99.100
             var connectionBuilder = new RabbitMQContextBuilder()
                     .WithExchange("MVM.EventExchange")
-                    .WithAddress("localhost", 5672)
+                    .WithAddress("192.168.99.100", 5672)
                     .WithCredentials(userName: "guest", password: "guest");
+
 
 
             using (var context = connectionBuilder.CreateContext())

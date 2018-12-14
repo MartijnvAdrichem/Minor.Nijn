@@ -33,7 +33,7 @@ namespace VoorbeeldMicroservice
         {
             //Thread.Sleep(1000);
             Console.WriteLine("TestCommand ontvangen:");
-            throw new FooException("Dit is een testexception @@@@@@@@@@@@@@@@@");
+            throw new TestException("Dit is een testexception @!@#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
             return evt.i * evt.i;
         }
         [Command("TestjeAsync")]
@@ -50,15 +50,15 @@ namespace VoorbeeldMicroservice
         public async Task Handles(PolisToegevoegdEvent evt)
         {
             Console.WriteLine("Werkt dit?????????");
-            try
-            {
-                var result = await _commandPublisher.Publish<long>(new TestCommand() {i = 10}, "Testje");
-                Console.WriteLine(result);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
+//            try
+//            {
+//                var result = await _commandPublisher.Publish<long>(new TestCommand() {i = 10}, "Testje");
+//                Console.WriteLine(result);
+//            }
+//            catch (Exception e)
+//            {
+//                Console.WriteLine(e);
+//            }
         }
 
         [Command("Testje2")]
