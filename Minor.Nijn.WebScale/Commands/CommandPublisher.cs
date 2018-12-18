@@ -32,7 +32,6 @@ namespace Minor.Nijn.WebScale.Commands
             var commandMessage = new CommandRequestMessage(body, domainCommand.CorrelationId);
             var task = Sender.SendCommandAsync(commandMessage, queueName);
 
-            
             if (await Task.WhenAny(task, Task.Delay(5000)) == task)
             {
                 // Task completed within timeout.
@@ -51,10 +50,11 @@ namespace Minor.Nijn.WebScale.Commands
                                    GetTypeFromReferencedAssemblies(result.MessageType);
 
                         e = Activator.CreateInstance(type, result.Message);
-                      //  e = MicroserviceHost.CreateException(result.MessageType, result.Message);
+
                     }
                     catch (Exception ex)
                     {
+                        _logger.LogWarning("Invalid exception found {}",  result.MessageType);
                         throw new InvalidCastException(
                             $"an unknown exception occured (message {result.Message}), exception type was {result.MessageType}");
                     }
@@ -72,15 +72,9 @@ namespace Minor.Nijn.WebScale.Commands
 
         private Type GetTypeFromReferencedAssemblies(string name)
         {
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
-
             Type type = _previousFoundAssembly?.GetType(name);
             if (type != null)
             {
-                stopwatch.Stop();
-                _logger.LogInformation(@"Time elapsed {0:hh\\:mm\\:ss}", stopwatch.Elapsed.ToString());
-
                 return type;
             }
 
@@ -91,8 +85,6 @@ namespace Minor.Nijn.WebScale.Commands
                 if (type != null)
                 {
                     _previousFoundAssembly = loadingAssembly;
-                    stopwatch.Stop();
-                    _logger.LogInformation(@"Time elapsed {0:hh\\:mm\\:ss}", stopwatch.Elapsed.ToString());
                     return type;
                 }
             }

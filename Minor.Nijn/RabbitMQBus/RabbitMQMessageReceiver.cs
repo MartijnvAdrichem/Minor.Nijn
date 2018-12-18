@@ -89,6 +89,8 @@ namespace Minor.Nijn.RabbitMQBus
                 var body = ea.Body;
                 var message = Encoding.UTF8.GetString(body);
 
+                _log.LogInformation("Received event with routing key {}", ea.RoutingKey);
+
                 var eventMessage = new EventMessage(ea.RoutingKey, message, ea.BasicProperties.Type, ea.BasicProperties.Timestamp.UnixTime, ea.BasicProperties.CorrelationId);
                 callback(eventMessage);
             };

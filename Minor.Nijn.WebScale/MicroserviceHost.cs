@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Minor.Nijn.WebScale.Commands;
 using Minor.Nijn.WebScale.Events;
 using RabbitMQ.Client;
@@ -16,6 +18,7 @@ namespace Minor.Nijn.WebScale
     {
         private readonly List<CommandListener> _commandListeners;
         private static  Assembly _callingAssembly;
+        private readonly ILogger _logger;
         private readonly List<EventListener> _eventListeners;
         public IBusContext<IConnection> Context;
 
@@ -31,6 +34,7 @@ namespace Minor.Nijn.WebScale
             _eventListeners = eventListeners;
             _commandListeners = commandListeners;
             _callingAssembly = callingAssembly;
+            _logger = NijnLogger.CreateLogger<MicroserviceHost>();
 
             if (provider != null) Provider = provider.BuildServiceProvider();
         }
@@ -68,7 +72,16 @@ namespace Minor.Nijn.WebScale
 
         public object CreateInstanceOfType(Type type)
         {
-            return ActivatorUtilities.CreateInstance(Provider, type);
+            try
+            {
+                var instance = ActivatorUtilities.CreateInstance(Provider, type);
+                return instance;
+            }
+            catch(InvalidOperationException e)
+            {
+                _logger.LogError("Could not make instance of class {}", e.Message);
+                return null;
+            }
         }
 
         public static Exception CreateException(string messageType, object message)

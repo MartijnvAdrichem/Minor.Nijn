@@ -28,10 +28,13 @@ namespace Minor.Nijn.RabbitMQBus
             _consumer = new EventingBasicConsumer(Channel);
             _consumer.Received += (model, ea) =>
             {
+
                 if (!_callbackMapper.TryRemove(ea.BasicProperties.CorrelationId, out var tcs))
                     return;
                 var body = ea.Body;
                 var message = Encoding.UTF8.GetString(body);
+
+                _logger.LogInformation("Received command answer with correlation id {0}", ea.BasicProperties.CorrelationId);
 
                 var commandResponse =
                     new CommandResponseMessage(message, ea.BasicProperties.Type, ea.BasicProperties.CorrelationId);

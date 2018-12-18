@@ -232,6 +232,12 @@ namespace Minor.Nijn.WebScale
             return this;
         }
 
+        public MicroserviceHostBuilder RegisterDependencies(IServiceCollection servicesConfiguration)
+        {
+            _services = servicesConfiguration;
+            return this;
+        }
+
         /// <summary>
         ///     Creates the MicroserviceHost, based on the configurations
         /// </summary>

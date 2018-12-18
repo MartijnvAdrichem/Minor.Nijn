@@ -33,7 +33,7 @@ namespace VoorbeeldMicroservice
         {
             //Thread.Sleep(1000);
             Console.WriteLine("TestCommand ontvangen:");
-            throw new TestException("Dit is een testexception @!@#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+            //throw new TestException("Dit is een testexception @!@#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
             return evt.i * evt.i;
         }
         [Command("TestjeAsync")]
@@ -59,6 +59,11 @@ namespace VoorbeeldMicroservice
 //            {
 //                Console.WriteLine(e);
 //            }
+        }
+        [Topic("#")]
+        public void AuditLogger(EventMessage message)
+        {
+            Console.WriteLine("Audit:" + message.Message);
         }
 
         [Command("Testje2")]

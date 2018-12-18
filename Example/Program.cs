@@ -38,9 +38,10 @@ namespace VoorbeeldMicroservice
                     .SetLoggerFactory(loggerFactory)
                     .RegisterDependencies((services) =>
                     {
-                      services.AddTransient<IDataMapper, SinaasAppelDataMapper>();
-                      services.AddTransient<ICommandPublisher, CommandPublisher>();
-                      services.AddSingleton<IBusContext<IConnection>>(context);
+                        services.AddTransient<IDataMapper, SinaasAppelDataMapper>();
+                        services.AddTransient<ICommandPublisher, CommandPublisher>();
+                        services.AddSingleton<IBusContext<IConnection>>(context);
+
                     })
                     .WithContext(context)
                     .UseConventions();

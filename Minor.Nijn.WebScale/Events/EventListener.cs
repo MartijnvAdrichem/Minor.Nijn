@@ -63,7 +63,7 @@ namespace Minor.Nijn.WebScale.Events
                     continue;
                 }
 
-                if (method.TopicName == "#" && method.MethodParameter.GetType() == typeof(IEventMessage))
+                if (method.TopicName == "#" && method.MethodParameter.ParameterType == typeof(EventMessage))
                 {
                     StartMethod(instance, method.MethodInfo, new[] {receivedMessage}).Start();
                     continue;
