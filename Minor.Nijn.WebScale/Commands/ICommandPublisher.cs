@@ -5,6 +5,6 @@ namespace Minor.Nijn.WebScale.Commands
 {
     public interface ICommandPublisher : IDisposable
     {
-        Task<T> Publish<T>(DomainCommand domainCommand, string queuename);
+        Task<T> Publish<T>(DomainCommand domainCommand, string queuename, string commandType = "");
     }
 }

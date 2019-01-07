@@ -23,11 +23,11 @@ namespace Minor.Nijn.WebScale.Commands
 
         private ICommandSender Sender { get; }
 
-        public async Task<T> Publish<T>(DomainCommand domainCommand, string queueName)
+        public async Task<T> Publish<T>(DomainCommand domainCommand, string queueName, string commandType = "")
         {
             domainCommand.TimeStamp = DateTime.Now.Ticks;
             var body = JsonConvert.SerializeObject(domainCommand);
-            var commandMessage = new CommandRequestMessage(body, domainCommand.CorrelationId);
+            var commandMessage = new CommandRequestMessage(body, domainCommand.CorrelationId, commandType);
             var task = Sender.SendCommandAsync(commandMessage, queueName);
 
             
@@ -59,6 +59,10 @@ namespace Minor.Nijn.WebScale.Commands
                     throw e as Exception;
                 }
 
+                if (string.IsNullOrEmpty(result.Message))
+                {
+                    return default(T);
+                }
                 var obj = JsonConvert.DeserializeObject<T>(result.Message);
                 return obj;
             }

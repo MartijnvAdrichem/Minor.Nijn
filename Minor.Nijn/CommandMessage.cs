@@ -8,15 +8,18 @@ namespace Minor.Nijn
         public string Message { get; }
         public string CorrelationId { get; }
 
+        public string CommandType { get;}
+        
         public byte[] EncodeMessage()
         {
             return Encoding.UTF8.GetBytes(Message);
         }
 
-        public CommandRequestMessage(string message, string correlationId)
+        public CommandRequestMessage(string message, string correlationId, string commandType = "")
         {
             Message = message;
             CorrelationId = correlationId;
+            CommandType = commandType;
         }
 
     }

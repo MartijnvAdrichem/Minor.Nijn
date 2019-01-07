@@ -60,6 +60,7 @@ namespace Minor.Nijn.RabbitMQBus
             props.CorrelationId = Guid.NewGuid().ToString();
             props.ReplyTo = _replyQueueName;
             props.Timestamp = new AmqpTimestamp(DateTime.Now.Ticks);
+            props.Type = request.CommandType;
             var messageBytes = request.EncodeMessage();
 
             var tcs = new TaskCompletionSource<CommandResponseMessage>();

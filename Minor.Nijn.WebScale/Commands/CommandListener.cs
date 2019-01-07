@@ -48,7 +48,9 @@ namespace Minor.Nijn.WebScale.Commands
 
             if (result == null)
             {
-                throw new InvalidOperationException("Command " + _methodCommandInfo.MethodInfo.Name + " didn't return anything, make sure it returns a value or a Task<T>");
+
+                //throw new InvalidOperationException("Command " + _methodCommandInfo.MethodInfo.Name + " didn't return anything, make sure it returns a value or a Task<T>");
+                return new CommandResponseMessage("", "", commandMessage.CorrelationId);
             }
 
             object taskResult = null;
