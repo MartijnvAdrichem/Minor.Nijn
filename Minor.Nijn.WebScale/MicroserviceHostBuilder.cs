@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Minor.Nijn.WebScale.Attributes;
@@ -35,6 +36,8 @@ namespace Minor.Nijn.WebScale
         private List<EventListener> _eventListeners;
         private Assembly _callingAssembly;
 
+        private bool _exitOnIdle = false;
+        private TimeSpan _timeout;
         public MicroserviceHostBuilder()
         {
             _log = NijnLogger.CreateLogger<MicroserviceHostBuilder>();
@@ -48,6 +51,15 @@ namespace Minor.Nijn.WebScale
             _context = context;
             return this;
         }
+
+        public MicroserviceHostBuilder ExitAfterIdleTime(TimeSpan idleTime)
+        {
+            _exitOnIdle = true;
+            _timeout = idleTime;
+            return this;
+        }
+
+
 
         /// <summary>
         ///     Scans the assemblies for EventListeners and adds them to the MicroserviceHost
@@ -232,6 +244,12 @@ namespace Minor.Nijn.WebScale
             return this;
         }
 
+        public MicroserviceHostBuilder RegisterDependencies(IServiceCollection servicesConfiguration)
+        {
+            _services = servicesConfiguration;
+            return this;
+        }
+
         /// <summary>
         ///     Creates the MicroserviceHost, based on the configurations
         /// </summary>
@@ -244,7 +262,7 @@ namespace Minor.Nijn.WebScale
                 throw new ArgumentNullException();
             }
 
-            var microServiceHost = new MicroserviceHost(_context, _eventListeners, _commandListeners, _services, _callingAssembly);
+            var microServiceHost = new MicroserviceHost(_context, _eventListeners, _commandListeners, _services, _callingAssembly, _exitOnIdle, _timeout);
             return microServiceHost;
         }
     }

@@ -3,6 +3,12 @@ A C# wrapper around RabbitMQ
 
 This framework consists of 2 parts (Minor.Nijn and Minor.Nijn.Webscale). Minor.Nijn is the basic wrapper around RabbitMQ (event sending/receiving and RPC call sending/receiving). It also has a basic test environment used for integration testing.
 
+v2.3 adds:
+- AddCommandListener<T> method in MicroserviceHostBuilder
+- async commandlisteners
+- user defined exceptions can now be thrown by commandlisteners/publishers
+
+
 Initialize this part of the framework by using the RabbitMQContextBuilder, for example:
 
 ```
@@ -108,6 +114,12 @@ An example of a class that will be converted into queues:
       public int CommandListener(SomeCommand command)
       {
         //
+      }
+      
+      [Command("SomeOtherCommand")]
+      public async Task<int> CommandListenerAsync(SomeCommand command)
+      {
+      
       }
 
       //opens a topic (in the "DemoQueue") that will route all events that match this topic to this method.

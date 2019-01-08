@@ -4,6 +4,8 @@ using Microsoft.Extensions.Logging.Console;
 using Minor.Nijn.RabbitMQBus;
 using Minor.Nijn.WebScale;
 using System;
+using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using Minor.Nijn;
 using Minor.Nijn.TestBus;
@@ -18,6 +20,9 @@ namespace VoorbeeldMicroservice
         static void Main(string[] args)
         {
             ILoggerFactory loggerFactory = new LoggerFactory();
+            
+            //Deprecated method, maar kan even niet anders
+            ConsoleLoggerOptions options = new ConsoleLoggerOptions();
             loggerFactory.AddProvider(
                 new ConsoleLoggerProvider(
                     (text, logLevel) => logLevel >= LogLevel.Debug, true));
@@ -26,63 +31,52 @@ namespace VoorbeeldMicroservice
             var connectionBuilder = new RabbitMQContextBuilder()
                     .WithExchange("MVM.EventExchange")
                     .WithAddress("localhost", 5672)
-                    .WithCredentials(userName: "guest", password: "guest");
+                    .WithCredentials(userName: "Kantilever", password: "Kant1lever");
 
 
-            using (var context = connectionBuilder.CreateContext())
-            {
+
+            var context = connectionBuilder.CreateContext();
+            
                 var builder = new MicroserviceHostBuilder()
                     .SetLoggerFactory(loggerFactory)
                     .RegisterDependencies((services) =>
                     {
-                      services.AddTransient<IDataMapper, SinaasAppelDataMapper>();
-                      services.AddTransient<ICommandPublisher, CommandPublisher>();
-                      services.AddSingleton<IBusContext<IConnection>>(context);
+                        services.AddTransient<IDataMapper, SinaasAppelDataMapper>();
+                        services.AddTransient<ICommandPublisher, CommandPublisher>();
+                        services.AddSingleton<IBusContext<IConnection>>(context);
+
                     })
                     .WithContext(context)
+                    .ExitAfterIdleTime(new TimeSpan(0, 0, 0, 30))
                     .UseConventions();
 
-                using (var host = builder.CreateHost())
-                {
-                    host.StartListening();
+
+                    var host = builder.CreateHost();
+                
+                    host.StartListeningInOtherThread();
 
                     Console.WriteLine("ServiceHost is listening to incoming events...");
                     Console.WriteLine("Press any key to quit.");
 
                     var publisher = new EventPublisher(context);
                     publisher.Publish(new PolisToegevoegdEvent("MVM.Polisbeheer.PolisToegevoegd") {Message = "Hey"});
-                    publisher.Publish(new HenkToegevoegdEvent("Test") {Test = "Oi"});
-
-                    int i = 0;
-                    while (true)
-                    {
-
-                        Console.ReadKey();
-                        Test(context, i);
-                        i++;
-                    }
-                }
-            }
+                    publisher.Publish(new HenkToegevoegdEvent("Test") {Test = "Oi"});           
+            
         }
 
-        private async static Task Test(IBusContext<IConnection> context, int multiply)
+        private async static Task Test(IBusContext<IConnection> context)
         {
             CommandPublisher commandPublisher = new CommandPublisher(context);
-            var testcommand = new TestCommand() { i = new Random().Next(99,100) * multiply };
 
-            Console.WriteLine($"{multiply} sending");
-
-            try
+            ReplayEventsCommand replayEventsCommand = new ReplayEventsCommand()
             {
-                var result1 = await commandPublisher.Publish<int>(testcommand, "Testje");
-                Console.WriteLine(result1);
+                ToTimestamp = DateTime.Now.Ticks,
+                ExchangeName = "fddfgf",
+            };
 
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
+            var result = commandPublisher.Publish<bool>(replayEventsCommand, "AuditlogReplayService", "Minor.WSA.AuditLog.Commands.ReplayEventsCommand").Result;
 
+           
             //Console.WriteLine($"{multiply} result:" + result1);
         }
     }

@@ -29,13 +29,12 @@ namespace VoorbeeldMicroservice
         }
 
         [Command("Testje")]
-        public int CommandListner(TestCommand evt)
+        public void CommandListner(TestCommand evt)
         {
             //Thread.Sleep(1000);
-           // Console.WriteLine("TestCommand ontvangen:");
-            throw new TestException("Dit is een testexception @@@@@@@@@@@@@@@@@");
-            return evt.i * evt.i;
-        }
+            Console.WriteLine("************void***********");
+
+            }
         [Command("TestjeAsync")]
         public async Task<int> CommandListnerAsync(TestCommand evt)
         {
@@ -49,7 +48,21 @@ namespace VoorbeeldMicroservice
         [Topic("MVM.Polisbeheer.PolisToegevoegd")]
         public async Task Handles(PolisToegevoegdEvent evt)
         {
-           // Console.WriteLine("Werkt dit?????????");
+            Console.WriteLine("Werkt dit?????????");
+//            try
+//            {
+//                var result = await _commandPublisher.Publish<long>(new TestCommand() {i = 10}, "Testje");
+//                Console.WriteLine(result);
+//            }
+//            catch (Exception e)
+//            {
+//                Console.WriteLine(e);
+//            }
+        }
+        [Topic("#")]
+        public void AuditLogger(EventMessage message)
+        {
+            Console.WriteLine("Audit:" + message.Message);
         }
 
         [Command("Testje2")]
@@ -86,6 +99,34 @@ namespace VoorbeeldMicroservice
             //Console.WriteLine("Test Message ontvangen:");
            // Console.WriteLine(evt.Test);
         }
+    }
+
+    public class ReplayEventsCommand : DomainCommand
+    {
+        /// </summary>
+        public string ExchangeName { get; set; }
+
+        /// <summary>
+        /// Replay events that have occurred from and including this moment.
+        /// </summary>
+        public long? FromTimestamp { get; set; }
+
+        /// <summary>
+        /// Replay events that have occurred upto and including this moment.
+        /// </summary>
+        public long? ToTimestamp { get; set; }
+
+        /// <summary>
+        /// Replay only events from exactly this type.
+        /// IF null, all event types will be replayed.
+        /// </summary>
+        public string EventType { get; set; }
+
+        /// <summary>
+        /// Replay only events that match this Topic.
+        /// </summary>
+        public string Topic { get; set; }
+    
     }
 
     [EventListener("MVM.TestService.PolisEventListenerQueue")]

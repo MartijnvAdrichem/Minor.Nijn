@@ -8,5 +8,6 @@ namespace Minor.Nijn.WebScale
 
         object CreateInstanceOfType(Type type);
         void StartListening();
+        void StartListeningInOtherThread();
     }
 }

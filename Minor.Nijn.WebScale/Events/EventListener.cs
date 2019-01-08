@@ -32,6 +32,12 @@ namespace Minor.Nijn.WebScale.Events
 
         public void Handle(IEventMessage receivedMessage)
         {
+
+            if (Host != null)
+            {
+                Host.LastReceivedMessageTime = DateTime.Now;
+            }
+
             var methodList = Topics.Where(x => IsTopicMatching(x, receivedMessage.RoutingKey)).SelectMany(x => x.Value);
 
             foreach (var method in methodList)
@@ -59,25 +65,25 @@ namespace Minor.Nijn.WebScale.Events
 
                 if (method.MethodParameter == null)
                 {
-                    StartMethod(instance, method.MethodInfo, null).Start();
+                    StartMethod(instance, method.MethodInfo, null);
                     continue;
                 }
 
                 if (method.TopicName == "#" && method.MethodParameter.ParameterType == typeof(EventMessage))
                 {
-                    StartMethod(instance, method.MethodInfo, new[] {receivedMessage}).Start();
+                    StartMethod(instance, method.MethodInfo, new[] {receivedMessage});
                     continue;
                 }
 
                 var param = JsonConvert.DeserializeObject(receivedMessage.Message,
                     method.MethodParameter.ParameterType);
-                StartMethod(instance, method.MethodInfo, new[] {param}).Start();
+                StartMethod(instance, method.MethodInfo, new[] {param});
             }
         }
 
-        public Task StartMethod(object classInstance, MethodInfo method, object[] parameters)
+        public void StartMethod(object classInstance, MethodInfo method, object[] parameters)
         {
-            return new Task(() => method.Invoke(classInstance, parameters));
+            method.Invoke(classInstance, parameters) ;
         }
 
         private bool IsTopicMatching(KeyValuePair<TopicAttribute, List<MethodTopicInfo>> arg,

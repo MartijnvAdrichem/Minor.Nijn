@@ -22,7 +22,7 @@ namespace Minor.Nijn.RabbitMQBus
         {
             CheckDisposed();
 
-            _log.LogTrace($"Sending message to routing key {message.RoutingKey ?? ""}");
+            _log.LogInformation("Sending event to routing key {key} ", message.RoutingKey);
 
             byte[] body = message.EncodeMessage();
 

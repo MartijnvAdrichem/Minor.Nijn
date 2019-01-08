@@ -13,21 +13,21 @@ namespace Minor.Nijn.RabbitMQBus
 
         private IModel _channel { get; }
         public string QueueName { get; private set; }
-        private readonly ILogger _log;
+        private readonly ILogger _logger;
         private bool _disposed = false;
 
         public RabbitMQCommandReceiver(RabbitMQBusContext context, string queueName)
         {
             _channel = context.Connection.CreateModel();
             QueueName = queueName;
-            _log = NijnLogger.CreateLogger<RabbitMQCommandReceiver>();
+            _logger = NijnLogger.CreateLogger<RabbitMQCommandReceiver>();
         }
 
         public void DeclareCommandQueue()
         {
             CheckDisposed();
 
-            _log.LogInformation("Declared a queue {0} for commands", QueueName);
+            _logger.LogInformation("Declared a queue {0} for commands", QueueName);
             _channel.QueueDeclare(queue: QueueName, durable: false, exclusive: false, autoDelete: true,
                 arguments: null);
             _channel.BasicQos(0, 1, false);
@@ -53,6 +53,8 @@ namespace Minor.Nijn.RabbitMQBus
                 var props = ea.BasicProperties;
                 var replyProps = _channel.CreateBasicProperties();
                 replyProps.CorrelationId = props.CorrelationId;
+
+                _logger.LogInformation("Received command request with correlation id {0}", ea.BasicProperties.CorrelationId);
 
                 var message = Encoding.UTF8.GetString(body);
                 CommandResponseMessage response = null;
