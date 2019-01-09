@@ -32,7 +32,7 @@ namespace Minor.Nijn.WebScale.Commands
             var commandMessage = new CommandRequestMessage(body, domainCommand.CorrelationId, commandType);
             var task = Sender.SendCommandAsync(commandMessage, queueName);
 
-            if (await Task.WhenAny(task, Task.Delay(5000)) == task)
+            if (await Task.WhenAny(task, Task.Delay(1222222222)) == task)
             {
                 // Task completed within timeout.
                 // Consider that the task may have faulted or been canceled.

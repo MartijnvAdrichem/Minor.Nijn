@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging.Console;
 using Minor.Nijn.RabbitMQBus;
 using Minor.Nijn.WebScale;
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -59,9 +60,13 @@ namespace VoorbeeldMicroservice
                     Console.WriteLine("Press any key to quit.");
 
                     var publisher = new EventPublisher(context);
+                    var commandpublisher = new CommandPublisher(context);
                     publisher.Publish(new PolisToegevoegdEvent("MVM.Polisbeheer.PolisToegevoegd") {Message = "Hey"});
-                    publisher.Publish(new HenkToegevoegdEvent("Test") {Test = "Oi"});           
-            
+                    publisher.Publish(new HenkToegevoegdEvent("Test") {Test = "Oi"});
+
+            var result = commandpublisher.Publish<bool>(
+                new HaalVoorraadUitMagazijnCommand(3, 2),
+                "Kantilever.MagazijnService", "Kantilever.MagazijnService.HaalVoorraadUitMagazijnCommand");
         }
 
         private async static Task Test(IBusContext<IConnection> context)
@@ -78,6 +83,18 @@ namespace VoorbeeldMicroservice
 
            
             //Console.WriteLine($"{multiply} result:" + result1);
+        }
+    }
+
+    internal class HaalVoorraadUitMagazijnCommand : DomainCommand
+    {
+        public int I { get; }
+        public int I1 { get; }
+
+        public HaalVoorraadUitMagazijnCommand(int i, int i1)
+        {
+            I = i;
+            I1 = i1;
         }
     }
 }

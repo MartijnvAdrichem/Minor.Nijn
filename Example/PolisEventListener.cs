@@ -5,9 +5,13 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Example;
+using Microsoft.Extensions.DependencyInjection;
+using Minor.Nijn.RabbitMQBus;
+using Minor.Nijn.TestBus;
 using Minor.Nijn.WebScale.Attributes;
 using Minor.Nijn.WebScale.Commands;
 using Minor.Nijn.WebScale.Events;
+using RabbitMQ.Client;
 using Test;
 
 namespace VoorbeeldMicroservice
@@ -41,23 +45,39 @@ namespace VoorbeeldMicroservice
             //Thread.Sleep(1000);
             //Console.WriteLine("TestCommandAsync ontvangen:");
             await Task.Delay(new Random().Next(100, 3000));
-            throw new ArgumentException("Fout");
-            return evt.i * evt.i;
+            //throw new ArgumentException("Fout");
+            //return 250;
+            return 10;
         }
 
         [Topic("MVM.Polisbeheer.PolisToegevoegd")]
-        public async Task Handles(PolisToegevoegdEvent evt)
+        public async void Handles(PolisToegevoegdEvent evt)
         {
             Console.WriteLine("Werkt dit?????????");
-//            try
-//            {
-//                var result = await _commandPublisher.Publish<long>(new TestCommand() {i = 10}, "Testje");
-//                Console.WriteLine(result);
-//            }
-//            catch (Exception e)
-//            {
-//                Console.WriteLine(e);
-//            }
+
+
+            var context = new TestBusContext();
+
+            var builder = new MicroserviceHostBuilder()
+                .RegisterDependencies((services) =>
+                {
+                    services.AddTransient<IDataMapper, SinaasAppelDataMapper>();
+                    services.AddTransient<ICommandPublisher, CommandPublisher>();
+                    services.AddSingleton<IBusContext<IConnection>>(context);
+
+                })
+                .WithContext(context)
+                .AddCommandListener<PolisEventListener>();
+                
+
+
+            var host = builder.CreateHost();
+
+            host.StartListening();
+
+            var publisher = new CommandPublisher(context);
+            int result = await publisher.Publish<int>(new TestCommand(), "TestjeAsync");
+            Console.WriteLine("@($**(@!#&$*@(#&$*(@#&* ");
         }
         [Topic("#")]
         public void AuditLogger(EventMessage message)
