@@ -44,6 +44,7 @@ namespace VoorbeeldMicroservice
                     {
                         services.AddTransient<IDataMapper, SinaasAppelDataMapper>();
                         services.AddTransient<ICommandPublisher, CommandPublisher>();
+                        services.AddTransient<IEventPublisher, EventPublisher>();
                         services.AddSingleton<IBusContext<IConnection>>(context);
 
                     })
@@ -64,9 +65,6 @@ namespace VoorbeeldMicroservice
                     publisher.Publish(new PolisToegevoegdEvent("MVM.Polisbeheer.PolisToegevoegd") {Message = "Hey"});
                     publisher.Publish(new HenkToegevoegdEvent("Test") {Test = "Oi"});
 
-            var result = commandpublisher.Publish<bool>(
-                new HaalVoorraadUitMagazijnCommand(3, 2),
-                "Kantilever.MagazijnService", "Kantilever.MagazijnService.HaalVoorraadUitMagazijnCommand");
         }
 
         private async static Task Test(IBusContext<IConnection> context)

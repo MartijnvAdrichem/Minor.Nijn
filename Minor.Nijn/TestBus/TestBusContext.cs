@@ -8,6 +8,7 @@ namespace Minor.Nijn.TestBus
     {
         public IConnection Connection { get; }
         public string ExchangeName { get; }
+        public bool DontPublishEvents { get; set; } = true;
         public Dictionary<string, TestBusQueue> TestQueues { get; set; }
         public Dictionary<string, Queue<TestBusCommandMessage>> CommandQueues { get; set; }
 

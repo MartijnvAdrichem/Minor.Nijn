@@ -9,6 +9,7 @@ namespace Minor.Nijn
         TConnection Connection { get; }
         string ExchangeName { get; }
 
+        bool DontPublishEvents { get; set; }
         IMessageSender CreateMessageSender();
         IMessageReceiver CreateMessageReceiver(string queueName, IEnumerable<string> topicExpressions);
 

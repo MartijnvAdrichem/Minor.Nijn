@@ -22,23 +22,26 @@ namespace VoorbeeldMicroservice
     {
         private readonly IDataMapper mapper;
         private readonly ICommandPublisher _commandPublisher;
+        private readonly IEventPublisher _eventPublisher;
 
         //private readonly IDbContextOptions<PolisContext> _context;
-        public PolisEventListener(IDataMapper mapper, ICommandPublisher commandPublisher)
+        public PolisEventListener(IDataMapper mapper, ICommandPublisher commandPublisher, IEventPublisher eventPublisher)
         {
             this.mapper = mapper;
             _commandPublisher = commandPublisher;
+            _eventPublisher = eventPublisher;
             mapper.Print();
             //_context = context;
         }
 
         [Command("Testje")]
-        public void CommandListner(TestCommand evt)
+        public int CommandListner(TestCommand evt)
         {
             //Thread.Sleep(1000);
             Console.WriteLine("************void***********");
 
-            }
+            return 1;
+        }
         [Command("TestjeAsync")]
         public async Task<int> CommandListnerAsync(TestCommand evt)
         {
@@ -51,33 +54,9 @@ namespace VoorbeeldMicroservice
         }
 
         [Topic("MVM.Polisbeheer.PolisToegevoegd")]
-        public async void Handles(PolisToegevoegdEvent evt)
+        public void Handles(PolisToegevoegdEvent evt)
         {
             Console.WriteLine("Werkt dit?????????");
-
-
-            var context = new TestBusContext();
-
-            var builder = new MicroserviceHostBuilder()
-                .RegisterDependencies((services) =>
-                {
-                    services.AddTransient<IDataMapper, SinaasAppelDataMapper>();
-                    services.AddTransient<ICommandPublisher, CommandPublisher>();
-                    services.AddSingleton<IBusContext<IConnection>>(context);
-
-                })
-                .WithContext(context)
-                .AddCommandListener<PolisEventListener>();
-                
-
-
-            var host = builder.CreateHost();
-
-            host.StartListening();
-
-            var publisher = new CommandPublisher(context);
-            int result = await publisher.Publish<int>(new TestCommand(), "TestjeAsync");
-            Console.WriteLine("@($**(@!#&$*@(#&$*(@#&* ");
         }
         [Topic("#")]
         public void AuditLogger(EventMessage message)
@@ -116,8 +95,14 @@ namespace VoorbeeldMicroservice
         [Topic("Test")]
         public void Handles(HenkToegevoegdEvent evt)
         {
+            _eventPublisher.Publish(new PolisToegevoegdEvent("MVM.Polisbeheer.PolisToegevoegd"));
+            _eventPublisher.Publish(new PolisToegevoegdEvent("MVM.Polisbeheer.PolisToegevoegd"));
+            _eventPublisher.Publish(new PolisToegevoegdEvent("MVM.Polisbeheer.PolisToegevoegd"));
+            _eventPublisher.Publish(new PolisToegevoegdEvent("MVM.Polisbeheer.PolisToegevoegd"));
+            _eventPublisher.Publish(new PolisToegevoegdEvent("MVM.Polisbeheer.PolisToegevoegd"));
+            _eventPublisher.Publish(new PolisToegevoegdEvent("MVM.Polisbeheer.PolisToegevoegd"));
             //Console.WriteLine("Test Message ontvangen:");
-           // Console.WriteLine(evt.Test);
+            // Console.WriteLine(evt.Test);
         }
     }
 
