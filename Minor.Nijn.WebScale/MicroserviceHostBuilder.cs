@@ -38,6 +38,8 @@ namespace Minor.Nijn.WebScale
 
         private bool _exitOnIdle = false;
         private TimeSpan _timeout;
+
+        private bool _dontPublishNewEvents = false;
         public MicroserviceHostBuilder()
         {
             _log = NijnLogger.CreateLogger<MicroserviceHostBuilder>();
@@ -250,6 +252,12 @@ namespace Minor.Nijn.WebScale
             return this;
         }
 
+        public MicroserviceHostBuilder DisableEventPublishing()
+        {
+            _dontPublishNewEvents = true;
+            return this;
+        }
+
         /// <summary>
         ///     Creates the MicroserviceHost, based on the configurations
         /// </summary>
@@ -262,7 +270,7 @@ namespace Minor.Nijn.WebScale
                 throw new ArgumentNullException();
             }
 
-            var microServiceHost = new MicroserviceHost(_context, _eventListeners, _commandListeners, _services, _callingAssembly, _exitOnIdle, _timeout);
+            var microServiceHost = new MicroserviceHost(_context, _eventListeners, _commandListeners, _services, _callingAssembly, _exitOnIdle, _timeout, _dontPublishNewEvents);
             return microServiceHost;
         }
     }

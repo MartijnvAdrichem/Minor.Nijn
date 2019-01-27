@@ -9,6 +9,8 @@ namespace Minor.Nijn.RabbitMQBus
     {
         public IConnection Connection { get; }
         public string ExchangeName { get; }
+        public bool DontPublishEvents { get; set; } = true;
+
         private bool disposed = false;
         private ILogger _log;
 

@@ -31,11 +31,14 @@ namespace Minor.Nijn.WebScale
         private TimeSpan _timeout;
         private ManualResetEvent _manualResetEvent = new ManualResetEvent(false);
 
+        private readonly bool _dontPublishNewEvents;
+
         private bool _isDisposed; 
         public MicroserviceHost(IBusContext<IConnection> context, List<EventListener> eventListeners,
-            List<CommandListener> commandListeners, IServiceCollection provider, Assembly callingAssembly, bool exitOnTimeout, TimeSpan timeout)
+            List<CommandListener> commandListeners, IServiceCollection provider, Assembly callingAssembly, bool exitOnTimeout, TimeSpan timeout, bool dontPublishNewEvents)
         {
             Context = context;
+            context.DontPublishEvents = dontPublishNewEvents;
 
             if (eventListeners == null) eventListeners = new List<EventListener>();
             if (commandListeners == null) commandListeners = new List<CommandListener>();
@@ -45,6 +48,7 @@ namespace Minor.Nijn.WebScale
             _callingAssembly = callingAssembly;
             _exitOnTimeout = exitOnTimeout;
             _timeout = timeout;
+            _dontPublishNewEvents = dontPublishNewEvents;
             _logger = NijnLogger.CreateLogger<MicroserviceHost>();
 
             if (provider != null) Provider = provider.BuildServiceProvider();
