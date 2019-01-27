@@ -36,7 +36,7 @@ namespace VoorbeeldMicroservice
 
 
 
-            var context = connectionBuilder.CreateContext();
+            var context = new TestBusContext();
             
                 var builder = new MicroserviceHostBuilder()
                     .SetLoggerFactory(loggerFactory)
@@ -48,7 +48,6 @@ namespace VoorbeeldMicroservice
 
                     })
                     .WithContext(context)
-                    .ExitAfterIdleTime(new TimeSpan(0, 0, 0, 30))
                     .UseConventions();
 
 
@@ -63,10 +62,8 @@ namespace VoorbeeldMicroservice
                     var commandpublisher = new CommandPublisher(context);
                     publisher.Publish(new PolisToegevoegdEvent("MVM.Polisbeheer.PolisToegevoegd") {Message = "Hey"});
                     publisher.Publish(new HenkToegevoegdEvent("Test") {Test = "Oi"});
-
-            var result = commandpublisher.Publish<bool>(
-                new HaalVoorraadUitMagazijnCommand(3, 2),
-                "Kantilever.MagazijnService", "Kantilever.MagazijnService.HaalVoorraadUitMagazijnCommand");
+                    var result =  commandpublisher.Publish<int>(new TestCommand(), "Testje").Result;
+                    Console.WriteLine("Result " + result);
         }
 
         private async static Task Test(IBusContext<IConnection> context)

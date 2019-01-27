@@ -5,11 +5,11 @@
     <Authors>Martijn van Adrichem, Duncan Verbrugge</Authors>
     <Description>Wrapper around RabbitMQ</Description>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.5.1</Version>
+    <Version>2.5.2</Version>
     <PackageReleaseNotes></PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/MartijnvAdrichem/Minor.Nijn</PackageProjectUrl>
     <RepositoryUrl>https://github.com/MartijnvAdrichem/Minor.Nijn</RepositoryUrl>
-    <AssemblyVersion>2.5.1.0</AssemblyVersion>
+    <AssemblyVersion>2.5.2.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

@@ -33,12 +33,12 @@ namespace VoorbeeldMicroservice
         }
 
         [Command("Testje")]
-        public void CommandListner(TestCommand evt)
+        public async Task<int> CommandListner(TestCommand evt)
         {
-            //Thread.Sleep(1000);
+            await Task.Delay(100);
             Console.WriteLine("************void***********");
-
-            }
+            return 10;
+        }
         [Command("TestjeAsync")]
         public async Task<int> CommandListnerAsync(TestCommand evt)
         {

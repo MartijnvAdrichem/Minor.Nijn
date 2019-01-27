@@ -1,4 +1,5 @@
-﻿using RabbitMQ.Client;
+﻿using System.Collections.Concurrent;
+using RabbitMQ.Client;
 using System.Collections.Generic;
 using Minor.Nijn.RabbitMQBus;
 
@@ -9,12 +10,12 @@ namespace Minor.Nijn.TestBus
         public IConnection Connection { get; }
         public string ExchangeName { get; }
         public Dictionary<string, TestBusQueue> TestQueues { get; set; }
-        public Dictionary<string, Queue<TestBusCommandMessage>> CommandQueues { get; set; }
+        public ConcurrentDictionary<string, Queue<TestBusCommandMessage>> CommandQueues { get; set; }
 
         public TestBusContext()
         {
             TestQueues = new Dictionary<string, TestBusQueue>();
-            CommandQueues = new Dictionary<string, Queue<TestBusCommandMessage>>();
+            CommandQueues = new ConcurrentDictionary<string, Queue<TestBusCommandMessage>>();
         }
 
         public IMessageSender CreateMessageSender()
@@ -49,7 +50,7 @@ namespace Minor.Nijn.TestBus
         {
             if (!CommandQueues.ContainsKey(queueName))
             {
-                CommandQueues[queueName] = new Queue<TestBusCommandMessage>();
+                CommandQueues.TryAdd(queueName, new Queue<TestBusCommandMessage>());
             }
         }
 
